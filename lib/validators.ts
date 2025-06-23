@@ -9,6 +9,66 @@ export const packTagsSchema = z.object({
     .min(1),
 });
 
+export const initPackSchema = z.object({
+  title: z
+    .string({
+      required_error: "Le titre est requis",
+      invalid_type_error: "Le titre doit être une chaîne de caractères",
+    })
+    .min(1),
+  description: z
+    .string({
+      required_error: "La description est requise",
+      invalid_type_error: "La description doit être une chaîne de caractères",
+    })
+    .optional(),
+  long_description: z
+    .string({
+      required_error: "La description est requise",
+      invalid_type_error: "La description doit être une chaîne de caractères",
+    })
+    .optional(),
+  image: z
+    .string({
+      required_error: "L'image est requise",
+      invalid_type_error: "L'image doit être une chaîne de caractères",
+    })
+    .url("L'image doit être une URL valide")
+    .optional(),
+  tags: z.array(z.string()),
+});
+
+export const packDetailsSchema = z.object({
+  title: z
+    .string({
+      required_error: "Le titre est requis",
+      invalid_type_error: "Le titre doit être une chaîne de caractères",
+    })
+    .min(1),
+  description: z
+    .string({
+      required_error: "La description est requise",
+      invalid_type_error: "La description doit être une chaîne de caractères",
+    })
+    .optional(),
+  long_description: z
+    .string({
+      required_error: "La description est requise",
+      invalid_type_error: "La description doit être une chaîne de caractères",
+    })
+    .optional(),
+  image: z
+    .string({
+      required_error: "L'image est requise",
+      invalid_type_error: "L'image doit être une chaîne de caractères",
+    })
+    .url("L'image doit être une URL valide")
+    .optional(),
+  is_free: z.boolean(),
+  price: z.number(),
+  tags: z.array(z.string()),
+});
+
 export const orgSchema = z.object({
   name: z
     .string({
@@ -36,7 +96,7 @@ export const orgSchema = z.object({
     })
     .url("Le site web doit être une URL valide")
     .optional(),
-  socialLinks: z
+  social_links: z
     .object({
       facebook: z
         .string({

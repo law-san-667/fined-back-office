@@ -12,3 +12,5 @@ export type SocialLinks = {
 type RouterOutput = inferRouterOutputs<AppRouter>;
 
 export type OrgsReponse = RouterOutput["orgs"]["getOrgs"][number];
+export type PacksResponse = RouterOutput["packs"]["getPacks"][number];
+export type PackDetailsResponse = RouterOutput["packs"]["getPack"]["pack"];

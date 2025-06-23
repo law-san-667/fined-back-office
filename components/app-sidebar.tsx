@@ -56,7 +56,7 @@ const data = {
     },
     {
       title: "Packs",
-      url: "#",
+      url: "/dashboard/packs",
       icon: IconFolder,
     },
     {

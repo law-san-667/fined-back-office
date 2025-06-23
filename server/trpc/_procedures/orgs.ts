@@ -38,17 +38,17 @@ export const orgsRouter = createTRPCRouter({
       id: string;
       logo: string | null;
       name: string;
-      socialLinks: SocialLinks | null;
+      social_links: SocialLinks | null;
       updated_at: string | null;
       website: string | null;
     }[] = [];
 
     for (const org of data) {
-      const socials = org.socialLinks as SocialLinks;
+      const socials = org.social_links as SocialLinks;
 
       finalOrgs.push({
         ...org,
-        socialLinks: socials,
+        social_links: socials,
       });
     }
 
@@ -57,7 +57,7 @@ export const orgsRouter = createTRPCRouter({
   createOrg: privateProcedure
     .input(orgSchema)
     .mutation(async ({ ctx, input }) => {
-      const { name, description, logo, website, socialLinks } = input;
+      const { name, description, logo, website, social_links } = input;
 
       const { data: foundOrg, error: orgError } = await supabase
         .from("organizations")
@@ -88,11 +88,15 @@ export const orgsRouter = createTRPCRouter({
           description,
           logo,
           website,
-          socialLinks,
+          social_links,
         });
 
       if (createError) {
-        if (shouldLog) console.error(createError);
+        if (shouldLog)
+          console.error(
+            `Something went wrong when trying to create the org`,
+            createError
+          );
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message:
@@ -114,7 +118,7 @@ export const orgsRouter = createTRPCRouter({
 
       const { data: foundOrg, error: orgError } = await supabase
         .from("organizations")
-        .select("*")
+        .select("id")
         .match({ id });
 
       if (orgError) {
@@ -140,7 +144,11 @@ export const orgsRouter = createTRPCRouter({
         .match({ id });
 
       if (updateError) {
-        if (shouldLog) console.error(updateError);
+        if (shouldLog)
+          console.error(
+            `Something went wrong when updating the org:`,
+            updateError
+          );
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message:

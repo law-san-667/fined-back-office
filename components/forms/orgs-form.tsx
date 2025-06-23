@@ -1,11 +1,15 @@
+import { useSupabaseUpload } from "@/hooks/use-supabase-upload";
 import { orgSchema } from "@/lib/validators";
 import { trpc } from "@/server/trpc/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { isEqual } from "lodash";
+import { XIcon } from "lucide-react";
+import Image from "next/image";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import { Dropzone, DropzoneContent, DropzoneEmptyState } from "../dropzone";
 import { Button } from "../ui/button";
 import {
   Form,
@@ -37,7 +41,7 @@ const OrgsForm: React.FC<OrgsFormProps> = ({
       description: initValues?.description || "",
       logo: initValues?.logo || undefined,
       website: initValues?.website || undefined,
-      socialLinks: initValues?.socialLinks || undefined,
+      social_links: initValues?.social_links || undefined,
     },
   });
 
@@ -69,6 +73,23 @@ const OrgsForm: React.FC<OrgsFormProps> = ({
       },
     });
 
+  const props = useSupabaseUpload({
+    bucketName: "orgs",
+    allowedMimeTypes: ["image/*"],
+    maxFiles: 1,
+    maxFileSize: 1024 * 1024 * 16,
+    upsert: true,
+  });
+
+  React.useEffect(() => {
+    if (props.isSuccess) {
+      form.setValue(
+        "logo",
+        `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE}/${props.successes[0].path}`
+      );
+    }
+  }, [props]);
+
   const onSubmit = async (values: z.infer<typeof orgSchema>) => {
     try {
       if (id) {
@@ -76,10 +97,10 @@ const OrgsForm: React.FC<OrgsFormProps> = ({
           throw new Error("Données manquantes");
         }
 
-        // Filter out undefined values from values.socialLinks
-        const socialLinks = values.socialLinks
+        // Filter out undefined values from values.social_links
+        const social_links = values.social_links
           ? Object.fromEntries(
-              Object.entries(values.socialLinks).filter(
+              Object.entries(values.social_links).filter(
                 ([_, value]) => value !== undefined
               )
             )
@@ -87,7 +108,7 @@ const OrgsForm: React.FC<OrgsFormProps> = ({
 
         const newValues = {
           ...values,
-          socialLinks,
+          social_links,
         };
 
         if (isEqual(initValues, newValues)) {
@@ -116,6 +137,46 @@ const OrgsForm: React.FC<OrgsFormProps> = ({
         onSubmit={form.handleSubmit(onSubmit)}
         className="mx-auto w-full max-w-3xl space-y-4"
       >
+        <FormField
+          disabled={isCreating || isUpdating}
+          control={form.control}
+          name="logo"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Logo</FormLabel>
+              <FormControl>
+                {form.watch("logo") && form.watch("logo") !== "" ? (
+                  <div className="w-full h-72 rounded-2xl overflow-hidden relative">
+                    <Image
+                      src={form.watch("logo") || ""}
+                      alt="Logo"
+                      fill
+                      className="object-cover"
+                    />
+                    <Button
+                      size={"icon"}
+                      variant={"destructive"}
+                      className="size-7 rounded-full absolute right-2 top-2"
+                      onClick={() => {
+                        form.setValue("logo", undefined);
+                      }}
+                    >
+                      <XIcon />
+                    </Button>
+                  </div>
+                ) : (
+                  <Dropzone {...props}>
+                    <DropzoneEmptyState />
+                    <DropzoneContent />
+                  </Dropzone>
+                )}
+              </FormControl>
+
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <FormField
           disabled={isCreating || isUpdating}
           control={form.control}
@@ -168,7 +229,7 @@ const OrgsForm: React.FC<OrgsFormProps> = ({
           <FormField
             disabled={isCreating || isUpdating}
             control={form.control}
-            name="socialLinks.facebook"
+            name="social_links.facebook"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Facebook</FormLabel>
@@ -184,7 +245,7 @@ const OrgsForm: React.FC<OrgsFormProps> = ({
           <FormField
             disabled={isCreating || isUpdating}
             control={form.control}
-            name="socialLinks.twitter"
+            name="social_links.twitter"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Twitter / X</FormLabel>
@@ -200,7 +261,7 @@ const OrgsForm: React.FC<OrgsFormProps> = ({
           <FormField
             disabled={isCreating || isUpdating}
             control={form.control}
-            name="socialLinks.linkedin"
+            name="social_links.linkedin"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>LinkedIn</FormLabel>
@@ -216,7 +277,7 @@ const OrgsForm: React.FC<OrgsFormProps> = ({
           <FormField
             disabled={isCreating || isUpdating}
             control={form.control}
-            name="socialLinks.instagram"
+            name="social_links.instagram"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Instagram</FormLabel>
@@ -232,7 +293,7 @@ const OrgsForm: React.FC<OrgsFormProps> = ({
           <FormField
             disabled={isCreating || isUpdating}
             control={form.control}
-            name="socialLinks.youtube"
+            name="social_links.youtube"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Youtube</FormLabel>

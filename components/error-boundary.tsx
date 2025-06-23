@@ -1,60 +1,71 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
-import { BackendError } from "@/lib/error";
-import { Component, ErrorInfo, ReactNode } from "react";
-import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { AlertCircle } from "lucide-react";
+import React, { type ErrorInfo } from "react";
 
-interface Props {
-  children: ReactNode;
+interface ErrorBoundaryProps {
+  children: React.ReactNode;
+  fallback?: React.ReactNode;
 }
 
-interface State {
+interface ErrorBoundaryState {
   hasError: boolean;
   error: Error | null;
 }
 
-export class ErrorBoundary extends Component<Props, State> {
-  state: State = {
-    hasError: false,
-    error: null,
-  };
+class ErrorBoundary extends React.Component<
+  ErrorBoundaryProps,
+  ErrorBoundaryState
+> {
+  constructor(props: ErrorBoundaryProps) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
 
-  static getDerivedStateFromError(error: Error): State {
+  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+    // Update state so the next render will show the fallback UI.
     return { hasError: true, error };
   }
 
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    if (error instanceof BackendError) {
-      toast.error(error.message || "Une erreur serveur est survenue");
-    } else {
-      console.error("Caught error:", error, errorInfo);
-    }
+  componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
+    // You can log the error to an error reporting service here
+    console.error("Uncaught error:", error, errorInfo);
   }
 
-  render() {
-    const { hasError, error } = this.state;
+  resetErrorBoundary = () => {
+    this.setState({ hasError: false, error: null });
+  };
 
-    if (hasError && error && !(error instanceof BackendError)) {
+  render() {
+    if (this.state.hasError) {
+      // You can render any custom fallback UI
       return (
-        <div className="flex justify-center items-center min-h-[40vh] px-4">
-          <Card className="max-w-xl w-full">
-            <CardContent className="p-6 space-y-4">
-              <h2 className="text-xl font-bold text-red-600">
-                Une erreur est survenue
+        this.props.fallback || (
+          <div className="flex min-h-screen flex-col items-center justify-center bg-white">
+            <div className="w-full max-w-md rounded-lg border border-destructive bg-white p-8 shadow-md shadow-destructive/10">
+              <div className="mb-4 flex items-center justify-center">
+                <AlertCircle className="h-12 w-12 text-red-500" />
+              </div>
+              <h2 className="mb-4 text-center text-2xl font-bold">
+                Oops, something went wrong
               </h2>
-              <p className="text-sm text-muted-foreground">
-                <strong>{error.name}:</strong> {error.message}
+              <p className="mb-6 text-center text-gray-600">
+                {this.state.error?.message || "An unexpected error occurred."}
               </p>
-              <pre className="text-xs text-gray-500 whitespace-pre-wrap">
-                {error.stack}
-              </pre>
-            </CardContent>
-          </Card>
-        </div>
+              <div className="flex justify-center">
+                <Button variant={"outline"} onClick={this.resetErrorBoundary}>
+                  Try again
+                </Button>
+              </div>
+            </div>
+          </div>
+        )
       );
     }
 
     return this.props.children;
   }
 }
+
+export default ErrorBoundary;

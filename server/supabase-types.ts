@@ -16,7 +16,7 @@ export type Database = {
           id: string
           logo: string | null
           name: string
-          socialLinks: Json | null
+          social_links: Json | null
           updated_at: string | null
           website: string | null
         }
@@ -26,7 +26,7 @@ export type Database = {
           id?: string
           logo?: string | null
           name: string
-          socialLinks?: Json | null
+          social_links?: Json | null
           updated_at?: string | null
           website?: string | null
         }
@@ -36,11 +36,58 @@ export type Database = {
           id?: string
           logo?: string | null
           name?: string
-          socialLinks?: Json | null
+          social_links?: Json | null
           updated_at?: string | null
           website?: string | null
         }
         Relationships: []
+      }
+      pack_documents: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          order: number
+          pack_id: string
+          page_count: number | null
+          thumbnail: string | null
+          title: string
+          updated_at: string | null
+          url: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          order: number
+          pack_id: string
+          page_count?: number | null
+          thumbnail?: string | null
+          title: string
+          updated_at?: string | null
+          url: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          order?: number
+          pack_id?: string
+          page_count?: number | null
+          thumbnail?: string | null
+          title?: string
+          updated_at?: string | null
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pack_documents_pack_id_fkey"
+            columns: ["pack_id"]
+            isOneToOne: false
+            referencedRelation: "packs"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       pack_tags: {
         Row: {
@@ -62,6 +109,106 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      pack_videos: {
+        Row: {
+          created_at: string
+          description: string | null
+          duration: number
+          id: string
+          order: number
+          pack_id: string
+          thumbnail: string | null
+          title: string
+          update_at: string | null
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          duration: number
+          id?: string
+          order: number
+          pack_id: string
+          thumbnail?: string | null
+          title: string
+          update_at?: string | null
+          url: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          duration?: number
+          id?: string
+          order?: number
+          pack_id?: string
+          thumbnail?: string | null
+          title?: string
+          update_at?: string | null
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pack_videos_pack_id_fkey"
+            columns: ["pack_id"]
+            isOneToOne: false
+            referencedRelation: "packs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      packs: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          image: string | null
+          is_free: boolean
+          long_description: string | null
+          org_id: string | null
+          price: number
+          tags: string[]
+          title: string
+          total_duration: number
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          image?: string | null
+          is_free?: boolean
+          long_description?: string | null
+          org_id?: string | null
+          price: number
+          tags: string[]
+          title: string
+          total_duration?: number
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          image?: string | null
+          is_free?: boolean
+          long_description?: string | null
+          org_id?: string | null
+          price?: number
+          tags?: string[]
+          title?: string
+          total_duration?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "packs_orgId_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

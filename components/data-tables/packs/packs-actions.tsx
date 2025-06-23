@@ -1,4 +1,3 @@
-import OrgsForm from "@/components/forms/orgs-form";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -11,28 +10,29 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import IsLoading from "@/components/ui/is-loading";
-import { OrgsReponse } from "@/config/types";
+import { PacksResponse } from "@/config/types";
 
 import { trpc } from "@/server/trpc/client";
 import { IconPencil, IconTrash } from "@tabler/icons-react";
+import Link from "next/link";
 import React from "react";
 import { toast } from "sonner";
 
-type OrgsActionsProps = {
-  org: OrgsReponse;
+type PacksActionsProps = {
+  pack: PacksResponse;
 };
 
-const OrgsActions: React.FC<OrgsActionsProps> = ({ org }) => {
+const PacksActions: React.FC<PacksActionsProps> = ({ pack }) => {
   const [openUpdate, setOpenUpdate] = React.useState(false);
   const [openDelete, setOpenDelete] = React.useState(false);
 
   const utils = trpc.useUtils();
 
-  const { mutate: deleteOrg, isPending: isDeleting } =
-    trpc.orgs.deleteOrg.useMutation({
+  const { mutate: deletePack, isPending: isDeleting } =
+    trpc.packs.deletePack.useMutation({
       onSuccess: () => {
-        toast.success("L'organisation a été supprimée avec succès");
-        utils.orgs.getOrgs.invalidate();
+        toast.success("Le pack a été supprimé avec succès");
+        utils.packs.getPacks.invalidate();
       },
       onError: (error) => {
         toast.error(error.message);
@@ -41,39 +41,18 @@ const OrgsActions: React.FC<OrgsActionsProps> = ({ org }) => {
 
   return (
     <div className="flex items-center gap-2">
-      <Dialog open={openUpdate} onOpenChange={setOpenUpdate}>
-        <DialogTrigger asChild>
-          <Button
-            size={"icon"}
-            className="size-7"
-            onClick={() => setOpenUpdate(true)}
-            disabled={isDeleting}
-          >
-            <IconPencil />
-          </Button>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Modifier l&apos;organisation</DialogTitle>
-            <DialogDescription>
-              Vous êtes sur le point de modifier l&apos;organisation{" "}
-              <span className="text-primary">"{org.name}". </span>
-              Cette action sera appliquée à tout le système.
-            </DialogDescription>
-          </DialogHeader>
-          <OrgsForm
-            id={org.id}
-            initValues={{
-              name: org.name,
-              description: org.description || undefined,
-              logo: org.logo || undefined,
-              website: org.website || undefined,
-              socialLinks: org.social_links || undefined,
-            }}
-            setOpenUpdate={setOpenUpdate}
-          />
-        </DialogContent>
-      </Dialog>
+      <Button
+        size={"icon"}
+        className="size-7"
+        onClick={() => setOpenUpdate(true)}
+        disabled={isDeleting}
+        asChild
+      >
+        <Link href={`/dashboard/packs/${pack.id}/manage`}>
+          <IconPencil />
+          Modifier le pack
+        </Link>
+      </Button>
 
       <Dialog open={openDelete} onOpenChange={setOpenDelete}>
         <DialogTrigger asChild>
@@ -93,10 +72,10 @@ const OrgsActions: React.FC<OrgsActionsProps> = ({ org }) => {
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Supprimer l&apos;organisation</DialogTitle>
+            <DialogTitle>Supprimer le pack</DialogTitle>
             <DialogDescription>
-              Vous êtes sur le point de supprimer l&apos;organisation{" "}
-              <span className="text-primary">"{org.name}". </span>
+              Vous êtes sur le point de supprimer le pack{" "}
+              <span className="text-primary">"{pack.title}". </span>
               Cette action sera appliquée à tout le système.
             </DialogDescription>
           </DialogHeader>
@@ -106,7 +85,7 @@ const OrgsActions: React.FC<OrgsActionsProps> = ({ org }) => {
                 variant={"destructive"}
                 onClick={async () => {
                   setOpenDelete(false);
-                  deleteOrg({ id: org.id });
+                  deletePack({ id: pack.id });
                 }}
               >
                 Supprimer
@@ -126,4 +105,4 @@ const OrgsActions: React.FC<OrgsActionsProps> = ({ org }) => {
   );
 };
 
-export default OrgsActions;
+export default PacksActions;

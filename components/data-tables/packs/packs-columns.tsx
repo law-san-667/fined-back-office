@@ -1,10 +1,9 @@
 import { Checkbox } from "@/components/ui/checkbox";
-import { OrgsReponse } from "@/config/types";
+import { PacksResponse } from "@/config/types";
 import { ColumnDef } from "@tanstack/react-table";
-import Image from "next/image";
-import OrgsActions from "./orgs-actions";
+import PacksActions from "./packs-actions";
 
-export const orgsColumns: ColumnDef<OrgsReponse>[] = [
+export const packsColumns: ColumnDef<PacksResponse>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -32,31 +31,13 @@ export const orgsColumns: ColumnDef<OrgsReponse>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "logo",
-    header: "Logo",
-    cell: ({ row }) => {
-      return (
-        <div className="w-24 h-24 aspect-square rounded-2xl overflow-hidden relative">
-          <Image
-            src={row.original.logo || "/placeholder.svg"}
-            alt="Logo"
-            fill
-            className="object-cover"
-          />
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "name",
-    header: "Nom",
-    cell: ({ row }) => {
-      return <div className="w-full">{row.original.name}</div>;
-    },
+    accessorKey: "title",
+    header: "Titre",
     enableHiding: false,
   },
+
   {
     id: "actions",
-    cell: ({ row }) => <OrgsActions org={row.original} />,
+    cell: ({ row }) => <PacksActions pack={row.original} />,
   },
 ];
