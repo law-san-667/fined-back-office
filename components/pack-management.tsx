@@ -24,11 +24,19 @@ import {
 import { Clock, FileText, Play, Plus, Save, Tag, XIcon } from "lucide-react";
 import React from "react";
 import { DragOverlayItem } from "./drag-overlay-item";
+import DocumentForm from "./forms/document-form";
 import PackDetailsForm from "./forms/pack-details-form";
 import { SortableItem } from "./sortable-item";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog";
 import { Label } from "./ui/label";
 import {
   Select,
@@ -46,6 +54,10 @@ type PackManagementProps = {
 const PackManagement: React.FC<PackManagementProps> = ({ id }) => {
   const [data] = trpc.packs.getPack.useSuspenseQuery({ id });
   const [tags] = trpc.packTags.getTags.useSuspenseQuery();
+
+  const availableTags = tags.filter(
+    (tag) => !data.pack.tags.includes(tag.slug)
+  );
 
   const [activeId, setActiveId] = React.useState<string | null>(null);
 
@@ -161,11 +173,21 @@ const PackManagement: React.FC<PackManagementProps> = ({ id }) => {
           {/* Pack Details Section */}
           <Card className="shadow-lg border-0 bg-white/80 backdrop-blur">
             <CardHeader className="pb-6">
-              <CardTitle className="text-2xl flex items-center gap-2">
-                <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                  <FileText className="w-4 h-4 text-white" />
+              <CardTitle className="flex items-center gap-2 justify-between">
+                <div className="text-2xl flex items-center gap-2">
+                  <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                    <FileText className="w-4 h-4 text-white" />
+                  </div>
+                  <span>Détails du pack</span>
                 </div>
-                Détails du pack
+
+                {mode !== "edit-pack" ? (
+                  <Button onClick={() => setMode("edit-pack")}>Modifier</Button>
+                ) : (
+                  <Button variant={"outline"} onClick={() => setMode("none")}>
+                    Annuler
+                  </Button>
+                )}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-8">
@@ -179,12 +201,14 @@ const PackManagement: React.FC<PackManagementProps> = ({ id }) => {
               <Separator />
 
               {/* Pricing and Duration */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <Card className="border-slate-200">
                   <CardContent className="p-6">
                     <div className="flex items-center gap-2 mb-2">
-                      <Clock className="w-4 h-4 text-blue-600" />
-                      <Label className="font-medium">Total Duration</Label>
+                      <Clock className="size-6 text-blue-600" />
+                      <Label className="text-2xl font-medium">
+                        Durée totale
+                      </Label>
                     </div>
                     <div className="text-2xl font-bold text-blue-600">
                       {/* {formatDuration(calculateTotalDuration())} */}
@@ -199,8 +223,8 @@ const PackManagement: React.FC<PackManagementProps> = ({ id }) => {
                 <Card className="border-slate-200">
                   <CardContent className="p-6">
                     <div className="flex items-center gap-2 mb-2">
-                      <FileText className="w-4 h-4 text-green-600" />
-                      <Label className="font-medium">Resources</Label>
+                      <FileText className="size-7 text-green-600" />
+                      <Label className="text-2xl font-medium">Resources</Label>
                     </div>
                     <div className="space-y-1">
                       <div className="text-sm">
@@ -248,18 +272,24 @@ const PackManagement: React.FC<PackManagementProps> = ({ id }) => {
                 </div>
 
                 <div className="flex gap-3">
-                  <Select onValueChange={(value) => {}}>
-                    <SelectTrigger className="w-64">
-                      <SelectValue placeholder="Select from popular tags" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {tags.map((tag) => (
-                        <SelectItem key={tag.slug} value={tag.slug}>
-                          {tag.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  {availableTags.length > 0 ? (
+                    <Select onValueChange={(value) => {}}>
+                      <SelectTrigger className="w-64">
+                        <SelectValue placeholder="Select from popular tags" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {availableTags.map((tag) => (
+                          <SelectItem key={tag.slug} value={tag.slug}>
+                            {tag.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <span className="text-muted-foreground text-sm">
+                      Aucun tag disponible. Vous les avez tous sélectionnés.
+                    </span>
+                  )}
                 </div>
               </div>
             </CardContent>
@@ -287,10 +317,20 @@ const PackManagement: React.FC<PackManagementProps> = ({ id }) => {
                         {data.docs.length}
                       </Badge>
                     </CardTitle>
-                    <Button size="sm" className="shadow-sm">
-                      <Plus className="w-4 h-4 mr-2" />
-                      Ajouter un document
-                    </Button>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button size="sm" className="shadow-sm">
+                          <Plus className="w-4 h-4 mr-2" />
+                          Ajouter un document
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="bg-white">
+                        <DialogHeader>
+                          <DialogTitle>Nouveau document</DialogTitle>
+                        </DialogHeader>
+                        <DocumentForm />
+                      </DialogContent>
+                    </Dialog>
                   </div>
                 </CardHeader>
                 <CardContent>

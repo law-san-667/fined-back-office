@@ -15,6 +15,7 @@ import { Button } from "../ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -23,6 +24,7 @@ import {
 import { Input } from "../ui/input";
 import IsLoading from "../ui/is-loading";
 import { Label } from "../ui/label";
+import { Switch } from "../ui/switch";
 import { Textarea } from "../ui/textarea";
 
 type PackDetailsFornProps = {
@@ -50,6 +52,12 @@ const PackDetailsForn: React.FC<PackDetailsFornProps> = ({
       tags: pack.tags,
     },
   });
+
+  React.useEffect(() => {
+    if (mode !== "edit-pack") {
+      form.reset();
+    }
+  }, [mode]);
 
   const props = usePackThumbnailUpload();
 
@@ -124,13 +132,54 @@ const PackDetailsForn: React.FC<PackDetailsFornProps> = ({
               </FormItem>
             )}
           />
+
+          <FormField
+            disabled={disabled}
+            control={form.control}
+            name="is_free"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-center justify-between rounded-lg shadow-xs p-3 ">
+                <div className="space-y-0.5">
+                  <FormDescription>
+                    Spécifiez ici si le pack est gratuit ou non
+                  </FormDescription>
+                </div>
+                <FormControl>
+                  <Switch
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+
+          {!form.watch("is_free") && (
+            <FormField
+              disabled={disabled}
+              control={form.control}
+              name="price"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Prix en FCFA</FormLabel>
+                  <FormControl>
+                    <Input type="number" {...field} />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
         </div>
 
         <div className="space-y-6">
           <div className="space-y-2">
             <Label className="text-sm font-medium">Miniature</Label>
             <div className="border-2 border-dashed border-slate-200 rounded-xl p-6 text-center bg-slate-50/50">
-              {pack.image ? (
+              {mode !== "edit-pack" &&
+              form.watch("image") &&
+              form.watch("image") !== "" ? (
                 <div className="space-y-4">
                   <img
                     src={pack.image || "/placeholder.svg"}
@@ -139,12 +188,13 @@ const PackDetailsForn: React.FC<PackDetailsFornProps> = ({
                   />
                   <Button
                     variant="outline"
+                    disabled={disabled}
                     onClick={() => {
                       form.setValue("image", undefined);
                     }}
                     className="w-full"
                   >
-                    Change Cover Image
+                    Modifier la miniature
                   </Button>
                 </div>
               ) : (
@@ -191,9 +241,11 @@ const PackDetailsForn: React.FC<PackDetailsFornProps> = ({
           </div>
         </div>
 
-        <Button disabled={disabled} className="w-full col-span-full">
-          {disabled ? <IsLoading /> : "Sauvegarder"}
-        </Button>
+        {!disabled && (
+          <Button disabled={disabled} className="w-full col-span-full">
+            {disabled ? <IsLoading /> : "Sauvegarder"}
+          </Button>
+        )}
       </form>
     </Form>
   );

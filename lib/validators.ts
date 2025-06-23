@@ -136,3 +136,37 @@ export const orgSchema = z.object({
     })
     .optional(),
 });
+
+export const documentSchema = z.object({
+  title: z
+    .string({
+      required_error: "Le titre est requis",
+      invalid_type_error: "Le titre doit être une chaîne de caractères",
+    })
+    .min(1),
+  description: z
+    .string({
+      required_error: "La description est requise",
+      invalid_type_error: "La description doit être une chaîne de caractères",
+    })
+    .optional(),
+  url: z
+    .string({
+      required_error: "L'URL est requis",
+      invalid_type_error: "L'URL doit être une chaîne de caractères",
+    })
+    .url("L'URL doit être une URL valide"),
+  pageCount: z
+    .number({
+      required_error: "Le nombre de pages est requis",
+      invalid_type_error: "Le nombre de pages doit être un nombre",
+    })
+    .min(1),
+  thumbnail: z
+    .string({
+      required_error: "L'image est requis",
+      invalid_type_error: "L'image doit être une chaîne de caractères",
+    })
+    .url("L'image doit être une URL valide")
+    .optional(),
+});
