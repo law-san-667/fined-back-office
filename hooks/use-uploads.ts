@@ -16,7 +16,7 @@ export const usePackThumbnailUpload = () => {
 export const useDocumentUpload = () => {
   const props = useSupabaseUpload({
     bucketName: "documents",
-    allowedMimeTypes: ["application/pdf", "application/msword"],
+    allowedMimeTypes: ["application/pdf"],
     maxFiles: 1,
     maxFileSize: 1024 * 1024 * 50,
     upsert: true,

@@ -21,22 +21,29 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { Clock, FileText, Play, Plus, Save, Tag, XIcon } from "lucide-react";
+import { Clock, FileText, Play, Plus, Tag, Trash2, XIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 import React from "react";
+import { toast } from "sonner";
 import { DragOverlayItem } from "./drag-overlay-item";
 import DocumentForm from "./forms/document-form";
 import PackDetailsForm from "./forms/pack-details-form";
+import VideoForm from "./forms/video-form";
 import { SortableItem } from "./sortable-item";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
+  DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "./ui/dialog";
+import IsLoading from "./ui/is-loading";
 import { Label } from "./ui/label";
 import {
   Select,
@@ -52,6 +59,8 @@ type PackManagementProps = {
 };
 
 const PackManagement: React.FC<PackManagementProps> = ({ id }) => {
+  const router = useRouter();
+
   const [data] = trpc.packs.getPack.useSuspenseQuery({ id });
   const [tags] = trpc.packTags.getTags.useSuspenseQuery();
 
@@ -64,6 +73,41 @@ const PackManagement: React.FC<PackManagementProps> = ({ id }) => {
   const [mode, setMode] = React.useState<"edit-pack" | "edit-tags" | "none">(
     "none"
   );
+
+  const utils = trpc.useUtils();
+
+  const { mutate: deletePack, isPending: isDeletingPack } =
+    trpc.packs.deletePack.useMutation({
+      onSuccess: () => {
+        toast.success("Le pack a été supprimé avec succès");
+        router.push("/dashboard/packs");
+      },
+      onError: (error) => {
+        toast.error(error.message);
+      },
+    });
+
+  const { mutate: deleteDoc, isPending: isDeletingDoc } =
+    trpc.docs.deleteDoc.useMutation({
+      onSuccess: () => {
+        toast.success("Le document a été supprimé avec succès");
+        utils.packs.getPack.invalidate({ id });
+      },
+      onError: (error) => {
+        toast.error(error.message);
+      },
+    });
+
+  const { mutate: deleteVideo, isPending: isDeletingVideo } =
+    trpc.videos.deleteVideo.useMutation({
+      onSuccess: () => {
+        toast.success("Le video a été supprimé avec succès");
+        utils.packs.getPack.invalidate({ id });
+      },
+      onError: (error) => {
+        toast.error(error.message);
+      },
+    });
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -151,7 +195,7 @@ const PackManagement: React.FC<PackManagementProps> = ({ id }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+    <div className="min-h-screen">
       <div className="container mx-auto p-6 max-w-7xl">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
@@ -163,10 +207,42 @@ const PackManagement: React.FC<PackManagementProps> = ({ id }) => {
               Create and manage educational packs with ease
             </p>
           </div>
-          <Button size="lg" className="shadow-lg">
-            <Save className="w-5 h-5 mr-2" />
-            Sauvegarder
-          </Button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant={"destructive"} size="lg" className="shadow-lg">
+                <Trash2 className="w-5 h-5 mr-2" />
+                Supprimer
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Suppression du pack</DialogTitle>
+                <DialogDescription>
+                  Vous êtes sur le point de supprimer ce pack. Cette action est{" "}
+                  <span className="font-bold text-destructive">
+                    irréversible
+                  </span>{" "}
+                  faites attention.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <Button
+                  disabled={isDeletingPack}
+                  variant={"destructive"}
+                  onClick={() => {
+                    deletePack({ id });
+                  }}
+                >
+                  {isDeletingPack ? <IsLoading /> : "Supprimer"}
+                </Button>
+                <DialogClose asChild>
+                  <Button disabled={isDeletingPack} variant={"outline"}>
+                    Annuler
+                  </Button>
+                </DialogClose>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
 
         <div className="grid gap-8">
@@ -328,7 +404,7 @@ const PackManagement: React.FC<PackManagementProps> = ({ id }) => {
                         <DialogHeader>
                           <DialogTitle>Nouveau document</DialogTitle>
                         </DialogHeader>
-                        <DocumentForm />
+                        <DocumentForm packId={id} />
                       </DialogContent>
                     </Dialog>
                   </div>
@@ -348,17 +424,20 @@ const PackManagement: React.FC<PackManagementProps> = ({ id }) => {
                           description={doc.description || ""}
                           metadata={`${doc.page_count} pages`}
                           thumbnail={doc.thumbnail}
-                          onDelete={() => {}}
+                          isDeleteLoading={isDeletingDoc}
+                          onDelete={() => {
+                            deleteDoc({ docId: doc.id, packId: id });
+                          }}
                         />
                       ))}
                       {data.docs.length === 0 && (
                         <div className="text-center py-12 text-muted-foreground">
                           <FileText className="w-12 h-12 mx-auto mb-4 text-muted-foreground/50" />
                           <p className="text-lg font-medium mb-2">
-                            No documents yet
+                            Aucun document pour le moment
                           </p>
                           <p className="text-sm">
-                            Add your first document to get started
+                            Ajoutez un premier document pour commencer
                           </p>
                         </div>
                       )}
@@ -380,10 +459,20 @@ const PackManagement: React.FC<PackManagementProps> = ({ id }) => {
                         {data.videos.length}
                       </Badge>
                     </CardTitle>
-                    <Button size="sm" className="shadow-sm">
-                      <Plus className="w-4 h-4 mr-2" />
-                      Add Video
-                    </Button>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button size="sm" className="shadow-sm">
+                          <Plus className="w-4 h-4 mr-2" />
+                          Ajouter une vidéo
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Nouvelle vidéo</DialogTitle>
+                        </DialogHeader>
+                        <VideoForm packId={id} />
+                      </DialogContent>
+                    </Dialog>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -401,17 +490,20 @@ const PackManagement: React.FC<PackManagementProps> = ({ id }) => {
                           description={video.description || ""}
                           metadata={`${video.duration} min`}
                           thumbnail={video.thumbnail}
-                          onDelete={() => {}}
+                          isDeleteLoading={isDeletingVideo}
+                          onDelete={() => {
+                            deleteVideo({ packId: id, videoId: video.id });
+                          }}
                         />
                       ))}
                       {data.videos.length === 0 && (
                         <div className="text-center py-12 text-muted-foreground">
                           <Play className="w-12 h-12 mx-auto mb-4 text-muted-foreground/50" />
                           <p className="text-lg font-medium mb-2">
-                            No videos yet
+                            Aucune vidéo pour le moment
                           </p>
                           <p className="text-sm">
-                            Add your first video to get started
+                            Ajoutez une première vidéo pour commencer
                           </p>
                         </div>
                       )}

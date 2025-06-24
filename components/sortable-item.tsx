@@ -1,11 +1,12 @@
 "use client";
 
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import { GripVertical, Edit, Trash2, FileText, Play } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { Edit, FileText, GripVertical, Play, Trash2 } from "lucide-react";
+import IsLoading from "./ui/is-loading";
 
 interface SortableItemProps {
   id: string;
@@ -14,6 +15,7 @@ interface SortableItemProps {
   description: string;
   metadata: string;
   thumbnail: string | null;
+  isDeleteLoading: boolean;
   onDelete: () => void;
 }
 
@@ -24,6 +26,7 @@ export function SortableItem({
   description,
   metadata,
   thumbnail,
+  isDeleteLoading,
   onDelete,
 }: SortableItemProps) {
   const {
@@ -51,7 +54,7 @@ export function SortableItem({
       <CardContent className="p-4">
         <div className="flex items-start gap-3">
           <div
-            className="flex items-center justify-center w-8 h-8 rounded bg-muted cursor-grab active:cursor-grabbing touch-none"
+            className="flex items-center justify-center w-6 h-6 rounded bg-muted cursor-grab active:cursor-grabbing touch-none"
             {...attributes}
             {...listeners}
           >
@@ -85,7 +88,7 @@ export function SortableItem({
                       {title || `Untitled ${type}`}
                     </h4>
                     <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-                      {description || "No description provided"}
+                      {description || "Aucune description"}
                     </p>
                     <div className="flex items-center gap-2 mt-2">
                       <Badge variant="secondary" className="text-xs">
@@ -107,12 +110,16 @@ export function SortableItem({
                       <Edit className="w-3 h-3" />
                     </Button>
                     <Button
-                      variant="ghost"
+                      disabled={isDeleteLoading}
+                      variant={"destructive"}
                       size="sm"
                       onClick={onDelete}
-                      className="h-8 w-8 p-0 text-destructive hover:text-destructive"
                     >
-                      <Trash2 className="w-3 h-3" />
+                      {isDeleteLoading ? (
+                        <IsLoading />
+                      ) : (
+                        <Trash2 className="w-3 h-3" />
+                      )}
                     </Button>
                   </div>
                 </div>

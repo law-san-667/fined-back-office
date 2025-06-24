@@ -1,11 +1,8 @@
 "use client";
 
 import { DocumentResponse } from "@/config/types";
-import {
-  useDocumentThumbnailUpload,
-  useDocumentUpload,
-} from "@/hooks/use-uploads";
-import { documentSchema } from "@/lib/validators";
+import { useVideoThumbnailUpload, useVideoUpload } from "@/hooks/use-uploads";
+import { videoSchema } from "@/lib/validators";
 import { trpc } from "@/server/trpc/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { isEqual } from "lodash";
@@ -29,27 +26,27 @@ import { Input } from "../ui/input";
 import IsLoading from "../ui/is-loading";
 import { Textarea } from "../ui/textarea";
 
-type DocumentFormProps = {
+type VideoFormProps = {
   packId: string;
   doc?: DocumentResponse;
 };
 
-const DocumentForm: React.FC<DocumentFormProps> = ({ doc, packId }) => {
-  const form = useForm<z.infer<typeof documentSchema>>({
-    resolver: zodResolver(documentSchema),
+const VideoForm: React.FC<VideoFormProps> = ({ doc, packId }) => {
+  const form = useForm<z.infer<typeof videoSchema>>({
+    resolver: zodResolver(videoSchema),
     defaultValues: {
       title: doc?.title || undefined,
       description: doc?.description || undefined,
       url: doc?.url || undefined,
-      pageCount: doc?.page_count || undefined,
+      duration: doc?.page_count || undefined,
       thumbnail: doc?.thumbnail || undefined,
     },
   });
 
   const utils = trpc.useUtils();
 
-  const { mutate: createDoc, isPending: isCreating } =
-    trpc.docs.createDoc.useMutation({
+  const { mutate: createVideo, isPending: isCreating } =
+    trpc.videos.createVideo.useMutation({
       onSuccess: () => {
         toast.success("Le document a été créé avec succès");
         utils.packs.getPack.invalidate({ id: packId });
@@ -57,7 +54,7 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ doc, packId }) => {
           title: "",
           description: "",
           url: "",
-          pageCount: 0,
+          duration: 0,
           thumbnail: "",
         });
       },
@@ -66,8 +63,8 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ doc, packId }) => {
       },
     });
 
-  const { mutate: updateDoc, isPending: isUpdating } =
-    trpc.docs.updateDoc.useMutation({
+  const { mutate: updateVideo, isPending: isUpdating } =
+    trpc.videos.updateVideo.useMutation({
       onSuccess: () => {
         toast.success("Le document a été modifié avec succès");
         utils.packs.getPack.invalidate({ id: packId });
@@ -78,8 +75,8 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ doc, packId }) => {
       },
     });
 
-  const thumbnailProps = useDocumentThumbnailUpload();
-  const urlProps = useDocumentUpload();
+  const thumbnailProps = useVideoThumbnailUpload();
+  const urlProps = useVideoUpload();
 
   React.useEffect(() => {
     if (thumbnailProps.isSuccess) {
@@ -97,20 +94,20 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ doc, packId }) => {
     }
   }, [thumbnailProps, urlProps]);
 
-  const onSubmit = async (values: z.infer<typeof documentSchema>) => {
+  const onSubmit = async (values: z.infer<typeof videoSchema>) => {
     try {
       if (doc) {
         if (isEqual(doc, values)) {
           return toast.info("Les données n'ont pas été modifiées");
         }
 
-        updateDoc({
+        updateVideo({
           packId: packId,
-          docId: doc.id,
+          videoId: doc.id,
           data: values,
         });
       } else {
-        createDoc({
+        createVideo({
           packId: packId,
           data: values,
         });
@@ -204,12 +201,34 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ doc, packId }) => {
           name="url"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Document</FormLabel>
+              <FormLabel>Vidéo</FormLabel>
               <FormControl>
-                <Dropzone {...urlProps}>
-                  <DropzoneEmptyState />
-                  <DropzoneContent />
-                </Dropzone>
+                {form.watch("url") && form.watch("url") !== "" ? (
+                  <div className="w-full h-72 rounded-2xl overflow-hidden relative">
+                    <video
+                      className="h-full w-full rounded-md object-cover"
+                      src={form.watch("url") || ""}
+                      controls
+                      autoPlay={false}
+                    />
+
+                    <Button
+                      size={"icon"}
+                      variant={"destructive"}
+                      className="size-7 rounded-full absolute right-2 top-2"
+                      onClick={() => {
+                        form.setValue("url", "");
+                      }}
+                    >
+                      <XIcon />
+                    </Button>
+                  </div>
+                ) : (
+                  <Dropzone {...urlProps}>
+                    <DropzoneEmptyState />
+                    <DropzoneContent />
+                  </Dropzone>
+                )}
               </FormControl>
 
               <FormMessage />
@@ -217,18 +236,12 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ doc, packId }) => {
           )}
         />
 
-        <Input
-          readOnly
-          value={form.watch("url")}
-          placeholder="URL du document"
-        />
-
         <FormField
           control={form.control}
-          name="pageCount"
+          name="duration"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Nombre de pages</FormLabel>
+              <FormLabel>Durée de la vidéo (minutes)</FormLabel>
               <FormControl>
                 <Input {...field} />
               </FormControl>
@@ -252,4 +265,4 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ doc, packId }) => {
   );
 };
 
-export default DocumentForm;
+export default VideoForm;
