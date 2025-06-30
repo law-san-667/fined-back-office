@@ -76,6 +76,12 @@ export const orgSchema = z.object({
       invalid_type_error: "Le nom doit être une chaîne de caractères",
     })
     .min(1),
+  domain: z
+    .string({
+      required_error: "Le domaine est requis",
+      invalid_type_error: "Le domaine doit être une chaîne de caractères",
+    })
+    .min(1),
   description: z
     .string({
       required_error: "La description est requise",

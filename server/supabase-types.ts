@@ -13,6 +13,7 @@ export type Database = {
         Row: {
           created_at: string | null
           description: string | null
+          domain: string
           id: string
           logo: string | null
           name: string
@@ -23,6 +24,7 @@ export type Database = {
         Insert: {
           created_at?: string | null
           description?: string | null
+          domain: string
           id?: string
           logo?: string | null
           name: string
@@ -33,12 +35,46 @@ export type Database = {
         Update: {
           created_at?: string | null
           description?: string | null
+          domain?: string
           id?: string
           logo?: string | null
           name?: string
           social_links?: Json | null
           updated_at?: string | null
           website?: string | null
+        }
+        Relationships: []
+      }
+      otp_codes: {
+        Row: {
+          code: string
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          is_used: boolean
+          purpose: Database["public"]["Enums"]["otp-purpose"]
+          used_at: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          email: string
+          expires_at: string
+          id?: string
+          is_used?: boolean
+          purpose: Database["public"]["Enums"]["otp-purpose"]
+          used_at?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          is_used?: boolean
+          purpose?: Database["public"]["Enums"]["otp-purpose"]
+          used_at?: string | null
         }
         Relationships: []
       }
@@ -210,15 +246,85 @@ export type Database = {
           },
         ]
       }
+      tokens: {
+        Row: {
+          created_at: string | null
+          email: string
+          expires_at: string
+          hash: string
+          id: string
+          is_revoked: boolean
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          expires_at: string
+          hash: string
+          id?: string
+          is_revoked?: boolean
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          expires_at?: string
+          hash?: string
+          id?: string
+          is_revoked?: boolean
+        }
+        Relationships: []
+      }
+      users: {
+        Row: {
+          created_at: string | null
+          email: string
+          id: string
+          isAdmin: boolean
+          isPremium: boolean
+          last_login: string | null
+          last_logout: string | null
+          name: string
+          orgs: string[]
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          id?: string
+          isAdmin?: boolean
+          isPremium?: boolean
+          last_login?: string | null
+          last_logout?: string | null
+          name: string
+          orgs: string[]
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          id?: string
+          isAdmin?: boolean
+          isPremium?: boolean
+          last_login?: string | null
+          last_logout?: string | null
+          name?: string
+          orgs?: string[]
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      add_org: {
+        Args: { p_user_id: string; p_org: string }
+        Returns: undefined
+      }
     }
     Enums: {
-      [_ in never]: never
+      "otp-purpose": "VERIFY" | "VERIFY_ORG"
+      "user-status": "PENDING_VERIFICATION" | "VERIFIED"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -333,6 +439,9 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      "otp-purpose": ["VERIFY", "VERIFY_ORG"],
+      "user-status": ["PENDING_VERIFICATION", "VERIFIED"],
+    },
   },
 } as const

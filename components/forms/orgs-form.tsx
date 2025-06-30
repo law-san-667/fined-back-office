@@ -38,9 +38,10 @@ const OrgsForm: React.FC<OrgsFormProps> = ({
     resolver: zodResolver(orgSchema),
     defaultValues: {
       name: initValues?.name || "",
+      domain: initValues?.domain || "",
       description: initValues?.description || "",
       logo: initValues?.logo || undefined,
-      website: initValues?.website || undefined,
+      website: initValues?.website || "",
       social_links: initValues?.social_links || undefined,
     },
   });
@@ -196,6 +197,22 @@ const OrgsForm: React.FC<OrgsFormProps> = ({
         <FormField
           disabled={isCreating || isUpdating}
           control={form.control}
+          name="domain"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Domaine</FormLabel>
+              <FormControl>
+                <Input {...field} placeholder="example.com" />
+              </FormControl>
+
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          disabled={isCreating || isUpdating}
+          control={form.control}
           name="description"
           render={({ field }) => (
             <FormItem>
@@ -209,23 +226,23 @@ const OrgsForm: React.FC<OrgsFormProps> = ({
           )}
         />
 
-        <FormField
-          disabled={isCreating || isUpdating}
-          control={form.control}
-          name="website"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Site internet</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <FormField
+            disabled={isCreating || isUpdating}
+            control={form.control}
+            name="website"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Site internet</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <FormField
             disabled={isCreating || isUpdating}
             control={form.control}

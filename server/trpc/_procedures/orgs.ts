@@ -35,6 +35,7 @@ export const orgsRouter = createTRPCRouter({
     let finalOrgs: {
       created_at: string | null;
       description: string | null;
+      domain: string;
       id: string;
       logo: string | null;
       name: string;
@@ -83,13 +84,7 @@ export const orgsRouter = createTRPCRouter({
 
       const { error: createError } = await supabase
         .from("organizations")
-        .insert({
-          name,
-          description,
-          logo,
-          website,
-          social_links,
-        });
+        .insert(input);
 
       if (createError) {
         if (shouldLog)

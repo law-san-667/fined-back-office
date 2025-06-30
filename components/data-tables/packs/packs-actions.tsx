@@ -50,7 +50,6 @@ const PacksActions: React.FC<PacksActionsProps> = ({ pack }) => {
       >
         <Link href={`/dashboard/packs/${pack.id}/manage`}>
           <IconPencil />
-          Modifier le pack
         </Link>
       </Button>
 

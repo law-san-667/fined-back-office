@@ -68,6 +68,7 @@ const OrgsActions: React.FC<OrgsActionsProps> = ({ org }) => {
               description: org.description || undefined,
               logo: org.logo || undefined,
               website: org.website || undefined,
+              domain: org.domain,
               social_links: org.social_links || undefined,
             }}
             setOpenUpdate={setOpenUpdate}

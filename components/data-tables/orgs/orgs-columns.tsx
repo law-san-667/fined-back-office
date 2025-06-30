@@ -50,9 +50,11 @@ export const orgsColumns: ColumnDef<OrgsReponse>[] = [
   {
     accessorKey: "name",
     header: "Nom",
-    cell: ({ row }) => {
-      return <div className="w-full">{row.original.name}</div>;
-    },
+    enableHiding: false,
+  },
+  {
+    accessorKey: "domain",
+    header: "Domaine",
     enableHiding: false,
   },
   {
