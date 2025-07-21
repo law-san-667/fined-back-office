@@ -6,8 +6,8 @@ import {
   IconDatabase,
   IconFileAi,
   IconFileDescription,
-  IconFileWord,
   IconFolder,
+  IconHash,
   IconHelp,
   IconInnerShadowTop,
   IconReport,
@@ -29,6 +29,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { NavDocuments } from "./nav-documents";
 
 const data = {
   user: {
@@ -56,6 +57,16 @@ const data = {
       title: "Packs",
       url: "/dashboard/packs",
       icon: IconFolder,
+    },
+    {
+      title: "Forum (Groupes)",
+      url: "/dashboard/forum/channels",
+      icon: IconHash,
+    },
+    {
+      title: "Forum (Questions)",
+      url: "/dashboard/forum/posts",
+      icon: IconHelp,
     },
   ],
   navClouds: [
@@ -125,20 +136,20 @@ const data = {
   ],
   documents: [
     {
-      name: "Tags",
+      name: "Tags (Packs)",
       url: "/dashboard/pack-tags",
       icon: IconDatabase,
     },
     {
-      name: "Reports",
-      url: "#",
+      name: "Tags (Questions",
+      url: "/dashboard/post-tags",
       icon: IconReport,
     },
-    {
-      name: "Word Assistant",
-      url: "#",
-      icon: IconFileWord,
-    },
+    // {
+    //   name: "Word Assistant",
+    //   url: "#",
+    //   icon: IconFileWord,
+    // },
   ],
 };
 
@@ -162,7 +173,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        {/* <NavDocuments items={data.documents} /> */}
+        <NavDocuments items={data.documents} />
         {/* <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
       </SidebarContent>
       <SidebarFooter>

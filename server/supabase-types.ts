@@ -7,8 +7,372 @@ export type Json =
   | Json[]
 
 export type Database = {
+  // Allows to automatically instanciate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "12.2.3 (519615d)"
+  }
   public: {
     Tables: {
+      budget_categories: {
+        Row: {
+          amount: number
+          budget_summary_id: string | null
+          color: string | null
+          created_at: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          amount: number
+          budget_summary_id?: string | null
+          color?: string | null
+          created_at?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          amount?: number
+          budget_summary_id?: string | null
+          color?: string | null
+          created_at?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "budget_categories_budget_summary_id_fkey"
+            columns: ["budget_summary_id"]
+            isOneToOne: false
+            referencedRelation: "budget_summaries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      budget_summaries: {
+        Row: {
+          created_at: string | null
+          id: string
+          month_year: string
+          monthly_budget: number | null
+          total_spent: number | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          month_year: string
+          monthly_budget?: number | null
+          total_spent?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          month_year?: string
+          monthly_budget?: number | null
+          total_spent?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "budget_summaries_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      channel_messages: {
+        Row: {
+          channel_id: string | null
+          created_at: string | null
+          id: string
+          reply_to_id: string | null
+          text: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          channel_id?: string | null
+          created_at?: string | null
+          id?: string
+          reply_to_id?: string | null
+          text: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          channel_id?: string | null
+          created_at?: string | null
+          id?: string
+          reply_to_id?: string | null
+          text?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "channel_messages_channel_id_fkey"
+            columns: ["channel_id"]
+            isOneToOne: false
+            referencedRelation: "forum_channels"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "channel_messages_reply_to_id_fkey"
+            columns: ["reply_to_id"]
+            isOneToOne: false
+            referencedRelation: "channel_messages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "channel_messages_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chat_messages: {
+        Row: {
+          conversation_id: string | null
+          created_at: string | null
+          id: string
+          sender: string | null
+          text: string
+          user_id: string | null
+        }
+        Insert: {
+          conversation_id?: string | null
+          created_at?: string | null
+          id?: string
+          sender?: string | null
+          text: string
+          user_id?: string | null
+        }
+        Update: {
+          conversation_id?: string | null
+          created_at?: string | null
+          id?: string
+          sender?: string | null
+          text?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_messages_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      expense_categories: {
+        Row: {
+          bg_color: string | null
+          created_at: string | null
+          id: string
+          name: string
+          text_color: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          bg_color?: string | null
+          created_at?: string | null
+          id?: string
+          name: string
+          text_color?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          bg_color?: string | null
+          created_at?: string | null
+          id?: string
+          name?: string
+          text_color?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expense_categories_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      expenses: {
+        Row: {
+          amount: number
+          category_id: string | null
+          created_at: string | null
+          date: string
+          id: string
+          title: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          amount: number
+          category_id?: string | null
+          created_at?: string | null
+          date: string
+          id?: string
+          title: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number
+          category_id?: string | null
+          created_at?: string | null
+          date?: string
+          id?: string
+          title?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expenses_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "expense_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expenses_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      forum_channels: {
+        Row: {
+          color: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          member_count: number | null
+          message_count: number | null
+          name: string
+          updated_at: string | null
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          member_count?: number | null
+          message_count?: number | null
+          name: string
+          updated_at?: string | null
+        }
+        Update: {
+          color?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          member_count?: number | null
+          message_count?: number | null
+          name?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      forum_posts: {
+        Row: {
+          answer_count: number | null
+          created_at: string | null
+          description: string
+          id: string
+          tags: string[] | null
+          title: string
+          updated_at: string | null
+          upvotes: number | null
+          user_id: string | null
+        }
+        Insert: {
+          answer_count?: number | null
+          created_at?: string | null
+          description: string
+          id?: string
+          tags?: string[] | null
+          title: string
+          updated_at?: string | null
+          upvotes?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          answer_count?: number | null
+          created_at?: string | null
+          description?: string
+          id?: string
+          tags?: string[] | null
+          title?: string
+          updated_at?: string | null
+          upvotes?: number | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "forum_questions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      news: {
+        Row: {
+          category: string
+          content: string | null
+          created_at: string | null
+          date: string
+          id: string
+          image: string
+          time: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          category: string
+          content?: string | null
+          created_at?: string | null
+          date: string
+          id?: string
+          image: string
+          time: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string
+          content?: string | null
+          created_at?: string | null
+          date?: string
+          id?: string
+          image?: string
+          time?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       organizations: {
         Row: {
           created_at: string | null
@@ -206,6 +570,7 @@ export type Database = {
           tags: string[]
           title: string
           total_duration: number
+          type: string | null
           updated_at: string | null
         }
         Insert: {
@@ -220,6 +585,7 @@ export type Database = {
           tags: string[]
           title: string
           total_duration?: number
+          type?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -234,6 +600,7 @@ export type Database = {
           tags?: string[]
           title?: string
           total_duration?: number
+          type?: string | null
           updated_at?: string | null
         }
         Relationships: [
@@ -245,6 +612,177 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      portfolio_positions: {
+        Row: {
+          avg_price: number
+          created_at: string | null
+          current_price: number
+          id: string
+          pnl: number | null
+          pnl_percent: number | null
+          portfolio_id: string | null
+          shares: number
+          stock_name: string
+          stock_symbol: string
+          updated_at: string | null
+        }
+        Insert: {
+          avg_price: number
+          created_at?: string | null
+          current_price: number
+          id?: string
+          pnl?: number | null
+          pnl_percent?: number | null
+          portfolio_id?: string | null
+          shares: number
+          stock_name: string
+          stock_symbol: string
+          updated_at?: string | null
+        }
+        Update: {
+          avg_price?: number
+          created_at?: string | null
+          current_price?: number
+          id?: string
+          pnl?: number | null
+          pnl_percent?: number | null
+          portfolio_id?: string | null
+          shares?: number
+          stock_name?: string
+          stock_symbol?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "portfolio_positions_portfolio_id_fkey"
+            columns: ["portfolio_id"]
+            isOneToOne: false
+            referencedRelation: "user_portfolios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      post_answers: {
+        Row: {
+          created_at: string | null
+          id: string
+          question_id: string | null
+          reply_to_id: string | null
+          text: string
+          updated_at: string | null
+          upvotes: number | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          question_id?: string | null
+          reply_to_id?: string | null
+          text: string
+          updated_at?: string | null
+          upvotes?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          question_id?: string | null
+          reply_to_id?: string | null
+          text?: string
+          updated_at?: string | null
+          upvotes?: number | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_answers_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "forum_posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "question_answers_reply_to_id_fkey"
+            columns: ["reply_to_id"]
+            isOneToOne: false
+            referencedRelation: "post_answers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "question_answers_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      post_tags: {
+        Row: {
+          created_at: string | null
+          name: string
+          slug: string
+          updated_At: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          name: string
+          slug: string
+          updated_At?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          name?: string
+          slug?: string
+          updated_At?: string | null
+        }
+        Relationships: []
+      }
+      stocks: {
+        Row: {
+          change: number
+          change_percent: number
+          chart_data: number[] | null
+          created_at: string | null
+          id: string
+          market_cap: string | null
+          name: string
+          pe_ratio: number | null
+          price: number
+          symbol: string
+          updated_at: string | null
+          volume: string | null
+        }
+        Insert: {
+          change: number
+          change_percent: number
+          chart_data?: number[] | null
+          created_at?: string | null
+          id?: string
+          market_cap?: string | null
+          name: string
+          pe_ratio?: number | null
+          price: number
+          symbol: string
+          updated_at?: string | null
+          volume?: string | null
+        }
+        Update: {
+          change?: number
+          change_percent?: number
+          chart_data?: number[] | null
+          created_at?: string | null
+          id?: string
+          market_cap?: string | null
+          name?: string
+          pe_ratio?: number | null
+          price?: number
+          symbol?: string
+          updated_at?: string | null
+          volume?: string | null
+        }
+        Relationships: []
       }
       tokens: {
         Row: {
@@ -273,6 +811,144 @@ export type Database = {
         }
         Relationships: []
       }
+      trade_history: {
+        Row: {
+          created_at: string | null
+          entry_price: number
+          exit_price: number
+          id: string
+          pnl: number
+          pnl_percent: number
+          shares: number
+          stock_name: string
+          stock_symbol: string
+          trade_date: string
+          type: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          entry_price: number
+          exit_price: number
+          id?: string
+          pnl: number
+          pnl_percent: number
+          shares: number
+          stock_name: string
+          stock_symbol: string
+          trade_date: string
+          type?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          entry_price?: number
+          exit_price?: number
+          id?: string
+          pnl?: number
+          pnl_percent?: number
+          shares?: number
+          stock_name?: string
+          stock_symbol?: string
+          trade_date?: string
+          type?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trade_history_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_portfolios: {
+        Row: {
+          available_margin: number | null
+          created_at: string | null
+          id: string
+          total_pnl: number | null
+          total_value: number | null
+          updated_at: string | null
+          used_margin: number | null
+          user_id: string | null
+        }
+        Insert: {
+          available_margin?: number | null
+          created_at?: string | null
+          id?: string
+          total_pnl?: number | null
+          total_value?: number | null
+          updated_at?: string | null
+          used_margin?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          available_margin?: number | null
+          created_at?: string | null
+          id?: string
+          total_pnl?: number | null
+          total_value?: number | null
+          updated_at?: string | null
+          used_margin?: number | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_portfolios_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_progress: {
+        Row: {
+          completed: boolean | null
+          content_id: string
+          content_type: string | null
+          created_at: string | null
+          id: string
+          last_accessed_at: string | null
+          progress: number | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          completed?: boolean | null
+          content_id: string
+          content_type?: string | null
+          created_at?: string | null
+          id?: string
+          last_accessed_at?: string | null
+          progress?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          completed?: boolean | null
+          content_id?: string
+          content_type?: string | null
+          created_at?: string | null
+          id?: string
+          last_accessed_at?: string | null
+          progress?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_progress_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       users: {
         Row: {
           created_at: string | null
@@ -284,6 +960,7 @@ export type Database = {
           last_logout: string | null
           name: string
           orgs: string[]
+          started_packs: string[] | null
           updated_at: string | null
         }
         Insert: {
@@ -296,6 +973,7 @@ export type Database = {
           last_logout?: string | null
           name: string
           orgs: string[]
+          started_packs?: string[] | null
           updated_at?: string | null
         }
         Update: {
@@ -308,6 +986,7 @@ export type Database = {
           last_logout?: string | null
           name?: string
           orgs?: string[]
+          started_packs?: string[] | null
           updated_at?: string | null
         }
         Relationships: []
@@ -332,21 +1011,25 @@ export type Database = {
   }
 }
 
-type DefaultSchema = Database[Extract<keyof Database, "public">]
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
+
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-        Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
     : never = never,
-> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-      Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
       Row: infer R
     }
     ? R
@@ -364,14 +1047,16 @@ export type Tables<
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Insert: infer I
     }
     ? I
@@ -387,14 +1072,16 @@ export type TablesInsert<
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Update: infer U
     }
     ? U
@@ -410,14 +1097,16 @@ export type TablesUpdate<
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   EnumName extends DefaultSchemaEnumNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
     : never = never,
-> = DefaultSchemaEnumNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
     ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
     : never
@@ -425,14 +1114,16 @@ export type Enums<
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
     : never = never,
-> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
   : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
     ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never

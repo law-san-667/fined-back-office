@@ -2,7 +2,7 @@
 
 import { slugify } from "@/lib/utils";
 
-import { packTagsSchema } from "@/lib/validators";
+import { postTagsSchema } from "@/lib/validators";
 import { trpc } from "@/server/trpc/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
@@ -27,8 +27,8 @@ type PostTagsFormProps = {
 };
 
 const PostTagsForm: React.FC<PostTagsFormProps> = ({ name, setOpenUpdate }) => {
-  const form = useForm<z.infer<typeof packTagsSchema>>({
-    resolver: zodResolver(packTagsSchema),
+  const form = useForm<z.infer<typeof postTagsSchema>>({
+    resolver: zodResolver(postTagsSchema),
     defaultValues: {
       name: name || "",
     },
@@ -37,10 +37,10 @@ const PostTagsForm: React.FC<PostTagsFormProps> = ({ name, setOpenUpdate }) => {
   const utils = trpc.useUtils();
 
   const { mutate: createTag, isPending: isCreating } =
-    trpc.packTags.createTag.useMutation({
+    trpc.postTags.createTag.useMutation({
       onSuccess: () => {
         toast.success("Le tag a été créé avec succès");
-        utils.packTags.getTags.invalidate();
+        utils.postTags.getTags.invalidate();
         form.reset();
         setOpenUpdate?.(false);
       },
@@ -50,10 +50,10 @@ const PostTagsForm: React.FC<PostTagsFormProps> = ({ name, setOpenUpdate }) => {
     });
 
   const { mutate: updateTag, isPending: isUpdating } =
-    trpc.packTags.updateTag.useMutation({
+    trpc.postTags.updateTag.useMutation({
       onSuccess: () => {
         toast.success("Le tag a été modifié avec succès");
-        utils.packTags.getTags.invalidate();
+        utils.postTags.getTags.invalidate();
         form.reset();
         setOpenUpdate?.(false);
       },
@@ -62,7 +62,7 @@ const PostTagsForm: React.FC<PostTagsFormProps> = ({ name, setOpenUpdate }) => {
       },
     });
 
-  async function onSubmit(values: z.infer<typeof packTagsSchema>) {
+  async function onSubmit(values: z.infer<typeof postTagsSchema>) {
     try {
       if (name && name.trim() !== "") {
         if (name === values.name) {

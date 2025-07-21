@@ -48,17 +48,17 @@ export function SortableItem({
       ref={setNodeRef}
       style={style}
       className={`transition-all duration-200 ${
-        isDragging ? "opacity-50 shadow-lg scale-105 z-50" : "hover:shadow-md"
+        isDragging ? "opacity-50 scale-105 z-50" : "hover:shadow-md"
       }`}
     >
       <CardContent className="p-4">
         <div className="flex items-start gap-3">
           <div
-            className="flex items-center justify-center w-6 h-6 rounded bg-muted cursor-grab active:cursor-grabbing touch-none"
+            className="flex items-center justify-center w-6 h-6 rounded bg-primary/50 cursor-grab active:cursor-grabbing touch-none"
             {...attributes}
             {...listeners}
           >
-            <GripVertical className="w-4 h-4 text-muted-foreground" />
+            <GripVertical className="w-4 h-4 text-black" />
           </div>
 
           <div className="flex-1 min-w-0">

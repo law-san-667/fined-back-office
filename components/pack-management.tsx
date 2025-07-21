@@ -21,7 +21,15 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { Clock, FileText, Play, Plus, Tag, Trash2, XIcon } from "lucide-react";
+import {
+  FileText,
+  FileVideo,
+  Play,
+  Plus,
+  Tag,
+  Trash2,
+  XIcon,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { toast } from "sonner";
@@ -45,6 +53,7 @@ import {
 } from "./ui/dialog";
 import IsLoading from "./ui/is-loading";
 import { Label } from "./ui/label";
+import { ScrollArea } from "./ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -281,39 +290,35 @@ const PackManagement: React.FC<PackManagementProps> = ({ id }) => {
                 <Card className="border-slate-200">
                   <CardContent className="p-6">
                     <div className="flex items-center gap-2 mb-2">
-                      <Clock className="size-6 text-blue-600" />
-                      <Label className="text-2xl font-medium">
-                        Durée totale
-                      </Label>
+                      <FileText className="size-6 text-blue-600" />
+                      <Label className="text-2xl font-medium">Documents</Label>
                     </div>
                     <div className="text-2xl font-bold text-blue-600">
-                      {/* {formatDuration(calculateTotalDuration())} */}
-                      0m
+                      {data.docs.length} doc(s)
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Calculated from 0 video
-                    </p>
                   </CardContent>
                 </Card>
 
                 <Card className="border-slate-200">
                   <CardContent className="p-6">
                     <div className="flex items-center gap-2 mb-2">
-                      <FileText className="size-7 text-green-600" />
-                      <Label className="text-2xl font-medium">Resources</Label>
+                      <FileVideo className="size-7 text-rose-500" />
+                      <Label className="text-2xl font-medium">Vidéos</Label>
                     </div>
                     <div className="space-y-1">
                       <div className="text-sm">
-                        <span className="font-semibold text-green-600">
-                          {data.docs.length}
+                        <span className="font-semibold text-rose-500">
+                          {data.videos.length}
                         </span>{" "}
-                        Documents
+                        vidéo(s)
                       </div>
                       <div className="text-sm">
                         <span className="font-semibold text-blue-600">
-                          {data.videos.length}
+                          {data.videos
+                            .map((video) => video.duration)
+                            .reduce((a, b) => a + b, 0)}
                         </span>{" "}
-                        Videos
+                        minute(s)
                       </div>
                     </div>
                   </CardContent>
@@ -476,39 +481,41 @@ const PackManagement: React.FC<PackManagementProps> = ({ id }) => {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <SortableContext
-                    items={data.videos.map((video) => video.id)}
-                    strategy={verticalListSortingStrategy}
-                  >
-                    <div className="space-y-3">
-                      {data.videos.map((video) => (
-                        <SortableItem
-                          key={video.id}
-                          id={video.id}
-                          type="video"
-                          title={video.title}
-                          description={video.description || ""}
-                          metadata={`${video.duration} min`}
-                          thumbnail={video.thumbnail}
-                          isDeleteLoading={isDeletingVideo}
-                          onDelete={() => {
-                            deleteVideo({ packId: id, videoId: video.id });
-                          }}
-                        />
-                      ))}
-                      {data.videos.length === 0 && (
-                        <div className="text-center py-12 text-muted-foreground">
-                          <Play className="w-12 h-12 mx-auto mb-4 text-muted-foreground/50" />
-                          <p className="text-lg font-medium mb-2">
-                            Aucune vidéo pour le moment
-                          </p>
-                          <p className="text-sm">
-                            Ajoutez une première vidéo pour commencer
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  </SortableContext>
+                  <ScrollArea className="h-[40rem] w-full">
+                    <SortableContext
+                      items={data.videos.map((video) => video.id)}
+                      strategy={verticalListSortingStrategy}
+                    >
+                      <div className="space-y-3">
+                        {data.videos.map((video) => (
+                          <SortableItem
+                            key={video.id}
+                            id={video.id}
+                            type="video"
+                            title={video.title}
+                            description={video.description || ""}
+                            metadata={`${video.duration} min`}
+                            thumbnail={video.thumbnail}
+                            isDeleteLoading={isDeletingVideo}
+                            onDelete={() => {
+                              deleteVideo({ packId: id, videoId: video.id });
+                            }}
+                          />
+                        ))}
+                        {data.videos.length === 0 && (
+                          <div className="text-center py-12 text-muted-foreground">
+                            <Play className="w-12 h-12 mx-auto mb-4 text-muted-foreground/50" />
+                            <p className="text-lg font-medium mb-2">
+                              Aucune vidéo pour le moment
+                            </p>
+                            <p className="text-sm">
+                              Ajoutez une première vidéo pour commencer
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </SortableContext>
+                  </ScrollArea>
                 </CardContent>
               </Card>
             </div>
