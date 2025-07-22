@@ -22,6 +22,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { GetSingleForumChannelResponse } from "@/config/types";
+import { cn } from "@/lib/utils";
 import { Database } from "@/server/supabase-types";
 import { trpc } from "@/server/trpc/client";
 import { fr } from "date-fns/locale";
@@ -115,6 +116,9 @@ export function ChannelMessagesTimeline({
         <div className="space-y-6">
           {messages.map((message, index) => {
             const isReply = message.reply_to_id !== null;
+
+            const isDeleted = message.is_deleted === true;
+
             const parentMessage = isReply
               ? getParentMessage(message.reply_to_id!)
               : null;
@@ -124,16 +128,26 @@ export function ChannelMessagesTimeline({
               <div key={message.id} className="relative">
                 {/* Timeline dot */}
                 <div
-                  className={`absolute left-6 top-6 h-4 w-4 rounded-full border-4 border-background md:left-10 ${
-                    isReply ? "bg-muted-foreground" : "bg-primary"
-                  }`}
+                  className={cn(
+                    `absolute left-6 top-6 h-4 w-4 rounded-full border-4 border-background md:left-10 bg-primary`,
+                    {
+                      "bg-muted-foreground": isReply,
+                      "bg-destructive": isDeleted,
+                    }
+                  )}
                 ></div>
 
                 <div
-                  className={`ml-16 md:ml-24 ${isReply ? "ml-20 md:ml-32" : ""}`}
+                  className={cn("ml-16 md:ml-24", {
+                    "ml-20 md:ml-32": isReply,
+                  })}
                 >
                   <Card
-                    className={`transition-all duration-200 ${isReply ? "border-l-4 border-l-muted-foreground bg-muted/30" : ""}`}
+                    className={cn(`transition-all duration-200`, {
+                      "border-l-4 border-l-muted-foreground bg-muted/30":
+                        isReply,
+                      "bg-zinc-300": isDeleted,
+                    })}
                   >
                     <CardContent className="p-4">
                       {/* Reply indicator */}
@@ -159,9 +173,14 @@ export function ChannelMessagesTimeline({
                           <div>
                             <div className="flex items-center gap-2">
                               <Badge>{message.users?.name}</Badge>
+                              {isDeleted && (
+                                <Badge variant="destructive" className="">
+                                  Supprimé
+                                </Badge>
+                              )}
                               {isEdited(message) && (
                                 <Badge variant="outline" className="">
-                                  edited
+                                  Modifié
                                 </Badge>
                               )}
                             </div>
@@ -194,22 +213,26 @@ export function ChannelMessagesTimeline({
                             <LucideChevronsUpDown />
                           </Button>
 
-                          <Button
-                            variant="destructive"
-                            size="icon"
-                            className="size-7"
-                            onClick={() => confirmDelete(message)}
-                            disabled={isDeletingMessage}
-                          >
-                            <Trash2 />
-                          </Button>
+                          {!isDeleted && (
+                            <Button
+                              variant="destructive"
+                              size="icon"
+                              className="size-7"
+                              onClick={() => confirmDelete(message)}
+                              disabled={isDeletingMessage}
+                            >
+                              <Trash2 />
+                            </Button>
+                          )}
                         </div>
                       </div>
 
                       {/* Message content */}
                       <div className="mt-3">
                         <p className="whitespace-pre-wrap text-sm leading-relaxed">
-                          {message.text}
+                          {isDeleted
+                            ? "Ce message a été supprimé..."
+                            : message.text}
                         </p>
                       </div>
 

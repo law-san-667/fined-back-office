@@ -10,6 +10,7 @@ export const packTagsSchema = z.object({
 });
 
 export const postTagsSchema = packTagsSchema;
+export const newsTagsSchema = packTagsSchema;
 
 export const initPackSchema = z.object({
   title: z
@@ -229,4 +230,31 @@ export const forumChannelSchema = z.object({
       invalid_type_error: "La couleur doit être une chaîne de caractères",
     })
     .optional(),
+});
+
+export const newsSchema = z.object({
+  title: z
+    .string({
+      required_error: "Le titre est requis",
+      invalid_type_error: "Le titre doit être une chaîne de caractères",
+    })
+    .min(1),
+  content: z
+    .string({
+      required_error: "Le contenu est requis",
+      invalid_type_error: "Le contenu doit être une chaîne de caractères",
+    })
+    .min(1),
+  image: z
+    .string({
+      required_error: "L'image est requis",
+      invalid_type_error: "L'image doit être une chaîne de caractères",
+    })
+    .url("L'image doit être une URL valide"),
+  category: z
+    .string({
+      required_error: "La catégorie est requise",
+      invalid_type_error: "La catégorie doit être une chaîne de caractères",
+    })
+    .min(1),
 });

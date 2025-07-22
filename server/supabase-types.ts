@@ -92,6 +92,7 @@ export type Database = {
           channel_id: string | null
           created_at: string | null
           id: string
+          is_deleted: boolean | null
           reply_to_id: string | null
           text: string
           updated_at: string | null
@@ -101,6 +102,7 @@ export type Database = {
           channel_id?: string | null
           created_at?: string | null
           id?: string
+          is_deleted?: boolean | null
           reply_to_id?: string | null
           text: string
           updated_at?: string | null
@@ -110,6 +112,7 @@ export type Database = {
           channel_id?: string | null
           created_at?: string | null
           id?: string
+          is_deleted?: boolean | null
           reply_to_id?: string | null
           text?: string
           updated_at?: string | null
@@ -342,10 +345,8 @@ export type Database = {
           category: string
           content: string | null
           created_at: string | null
-          date: string
           id: string
           image: string
-          time: string
           title: string
           updated_at: string | null
         }
@@ -353,10 +354,8 @@ export type Database = {
           category: string
           content?: string | null
           created_at?: string | null
-          date: string
           id?: string
           image: string
-          time: string
           title: string
           updated_at?: string | null
         }
@@ -364,12 +363,39 @@ export type Database = {
           category?: string
           content?: string | null
           created_at?: string | null
-          date?: string
           id?: string
           image?: string
-          time?: string
           title?: string
           updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "news_category_fkey"
+            columns: ["category"]
+            isOneToOne: false
+            referencedRelation: "news_tags"
+            referencedColumns: ["slug"]
+          },
+        ]
+      }
+      news_tags: {
+        Row: {
+          created_at: string | null
+          name: string
+          slug: string
+          updated_At: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          name: string
+          slug: string
+          updated_At?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          name?: string
+          slug?: string
+          updated_At?: string | null
         }
         Relationships: []
       }

@@ -10,6 +10,7 @@ import {
   IconHash,
   IconHelp,
   IconInnerShadowTop,
+  IconNews,
   IconReport,
   IconSearch,
   IconSettings,
@@ -67,6 +68,11 @@ const data = {
       title: "Forum (Questions)",
       url: "/dashboard/forum/posts",
       icon: IconHelp,
+    },
+    {
+      title: "News",
+      url: "/dashboard/news",
+      icon: IconNews,
     },
   ],
   navClouds: [
@@ -144,6 +150,11 @@ const data = {
       name: "Tags (Questions",
       url: "/dashboard/post-tags",
       icon: IconReport,
+    },
+    {
+      name: "Tags (News)",
+      url: "/dashboard/news-tags",
+      icon: IconFileAi,
     },
     // {
     //   name: "Word Assistant",
