@@ -1,5 +1,6 @@
 import { docsRouter } from "./_procedures/docs";
 import { forumChannelsRouter } from "./_procedures/forum-channels";
+import { forumPostsRouter } from "./_procedures/forum-posts";
 import { newsRouter } from "./_procedures/news";
 import { newsTagsRouter } from "./_procedures/news-tags";
 import { orgsRouter } from "./_procedures/orgs";
@@ -16,6 +17,7 @@ export const appRouter = createTRPCRouter({
   videos: videosRouter,
   news: newsRouter,
   forumChannels: forumChannelsRouter,
+  forumPosts: forumPostsRouter,
   packTags: packTagsRouter,
   postTags: postTagsRouter,
   newsTags: newsTagsRouter,

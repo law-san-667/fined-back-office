@@ -1,5 +1,5 @@
 import type { AppRouter } from "@/server/trpc/_app";
-import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
+import type { inferRouterOutputs } from "@trpc/server";
 
 export type SocialLinks = {
   facebook?: string;
@@ -17,8 +17,16 @@ export type PacksResponse = RouterOutput["packs"]["getPacks"][number];
 export type GetForumChannelsResponse =
   RouterOutput["forumChannels"]["getChannels"][number];
 
+export type GetForumPostsResponse =
+  RouterOutput["forumPosts"]["getPosts"][number];
+
 export type GetSingleForumChannelResponse =
   RouterOutput["forumChannels"]["getChannel"]["messages"][number];
+
+export type GetSingleForumPostAnswersResponse =
+  RouterOutput["forumPosts"]["getPost"]["answers"][number];
+export type GetSingleForumPostResponse =
+  RouterOutput["forumPosts"]["getPost"]["post"];
 
 export type GetNewsResponse = RouterOutput["news"]["getNews"][number];
 

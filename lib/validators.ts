@@ -258,3 +258,26 @@ export const newsSchema = z.object({
     })
     .min(1),
 });
+
+export const forumPostSchema = z.object({
+  title: z
+    .string({
+      required_error: "Le titre est requis",
+      invalid_type_error: "Le titre doit être une chaîne de caractères",
+    })
+    .min(1),
+  description: z.string({
+    required_error: "La description est requise",
+    invalid_type_error: "La description doit être une chaîne de caractères",
+  }),
+  tags: z.array(
+    z.string({
+      required_error: "Le tag est requis",
+      invalid_type_error: "Le tag doit être une chaîne de caractères",
+    }),
+    {
+      required_error: "Au moins un tag est requis",
+      invalid_type_error: "Au moins un tag doit être une chaîne de caractères",
+    }
+  ),
+});

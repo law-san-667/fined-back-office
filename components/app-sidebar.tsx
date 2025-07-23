@@ -2,14 +2,12 @@
 
 import {
   IconCamera,
-  IconDashboard,
   IconDatabase,
   IconFileAi,
   IconFileDescription,
   IconFolder,
   IconHash,
   IconHelp,
-  IconInnerShadowTop,
   IconNews,
   IconReport,
   IconSearch,
@@ -39,11 +37,11 @@ const data = {
     avatar: "/avatars/shadcn.jpg",
   },
   navMain: [
-    {
-      title: "Dashboard",
-      url: "#",
-      icon: IconDashboard,
-    },
+    // {
+    //   title: "Dashboard",
+    //   url: "#",
+    //   icon: IconDashboard,
+    // },
     {
       title: "Organisations",
       url: "/dashboard/orgs",
@@ -147,7 +145,7 @@ const data = {
       icon: IconDatabase,
     },
     {
-      name: "Tags (Questions",
+      name: "Tags (Questions)",
       url: "/dashboard/post-tags",
       icon: IconReport,
     },
@@ -166,7 +164,7 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar collapsible="offcanvas" {...props}>
+    <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -174,9 +172,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               asChild
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
-              <div>
-                <IconInnerShadowTop className="!size-5" />
-                <span className="text-base font-semibold">Fined.</span>
+              <div className="w-full h-fit">
+                <img
+                  src="/fined-logo.png"
+                  alt="logo"
+                  className="w-8 h-full object-cover"
+                />
+                <span className="text-base font-semibold">
+                  Fined - Dashboard
+                </span>
               </div>
             </SidebarMenuButton>
           </SidebarMenuItem>

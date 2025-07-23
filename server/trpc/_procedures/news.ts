@@ -182,6 +182,26 @@ export const newsRouter = createTRPCRouter({
 
       return updated[0];
     }),
+  deleteSelectedNews: privateProcedure
+    .input(z.object({ ids: z.array(z.string().uuid()) }))
+    .mutation(async ({ ctx, input }) => {
+      const { ids } = input;
+
+      for (const id of ids) {
+        const { error } = await supabase.from("news").delete().match({ id });
+
+        if (error) {
+          if (shouldLog) console.error(error);
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message:
+              "Une erreur est survenue lors de la suppression de l'article",
+          });
+        }
+      }
+
+      return true;
+    }),
   deleteNews: privateProcedure
     .input(z.object({ id: z.string().uuid() }))
     .mutation(async ({ ctx, input }) => {

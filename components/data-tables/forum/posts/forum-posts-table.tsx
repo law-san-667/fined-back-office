@@ -40,29 +40,29 @@ import {
 import { trpc } from "@/server/trpc/client";
 import React from "react";
 import { toast } from "sonner";
-import { DataTablePagination } from "../data-table-pagination";
-import { OrgsToolbar } from "./orgs-toolbar";
+import { DataTablePagination } from "../../data-table-pagination";
+import { ForumPostsToolbar } from "./forum-posts-toolbar";
 
-interface OrgsTableProps<TData, TValue> {
+interface ForumPostsTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   client?: boolean;
 }
 
-export function OrgsTable<TData, TValue>({
+export function ForumPostsTable<TData, TValue>({
   columns,
   data,
   client,
-}: OrgsTableProps<TData, TValue>) {
+}: ForumPostsTableProps<TData, TValue>) {
   const [openDelete, setOpenDelete] = React.useState(false);
 
   const utils = trpc.useUtils();
 
-  const { mutate: deleteSelectedOrgs, isPending: isDeleting } =
-    trpc.orgs.deleteSelectedOrgs.useMutation({
+  const { mutate: deleteSelectedPosts, isPending: isDeleting } =
+    trpc.forumPosts.deleteSelectedPosts.useMutation({
       onSuccess: () => {
-        toast.success("Les organisations ont été supprimés avec succès");
-        utils.orgs.getOrgs.invalidate();
+        toast.success("Les questions ont été supprimées avec succès");
+        utils.forumPosts.getPosts.invalidate();
         setOpenDelete(false);
       },
       onError: (error) => {
@@ -110,7 +110,7 @@ export function OrgsTable<TData, TValue>({
       .rows.map((row) => (row.original as { id: string }).id);
 
     if (ids.length > 0) {
-      deleteSelectedOrgs({ ids });
+      deleteSelectedPosts({ ids });
     }
   };
 
@@ -118,7 +118,7 @@ export function OrgsTable<TData, TValue>({
     <div className="space-y-4">
       <div className="flex w-full flex-col gap-2 md:flex-row md:items-center md:justify-between md:gap-4">
         <div className="flex w-full items-center justify-end">
-          <OrgsToolbar table={table} />
+          <ForumPostsToolbar table={table} />
         </div>
 
         {table.getFilteredSelectedRowModel().rows.length > 0 && (

@@ -20,12 +20,12 @@ export function NavDocuments({
   }[];
 }) {
   return (
-    <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+    <SidebarGroup>
       <SidebarGroupLabel>Communications</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
           <SidebarMenuItem key={item.name}>
-            <SidebarMenuButton asChild>
+            <SidebarMenuButton tooltip={item.name} asChild>
               <a href={item.url}>
                 <item.icon />
                 <span>{item.name}</span>

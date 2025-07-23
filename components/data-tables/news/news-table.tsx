@@ -41,28 +41,28 @@ import { trpc } from "@/server/trpc/client";
 import React from "react";
 import { toast } from "sonner";
 import { DataTablePagination } from "../data-table-pagination";
-import { OrgsToolbar } from "./orgs-toolbar";
+import { NewsToolbar } from "./news-toolbar";
 
-interface OrgsTableProps<TData, TValue> {
+interface NewsTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   client?: boolean;
 }
 
-export function OrgsTable<TData, TValue>({
+export function NewsTable<TData, TValue>({
   columns,
   data,
   client,
-}: OrgsTableProps<TData, TValue>) {
+}: NewsTableProps<TData, TValue>) {
   const [openDelete, setOpenDelete] = React.useState(false);
 
   const utils = trpc.useUtils();
 
-  const { mutate: deleteSelectedOrgs, isPending: isDeleting } =
-    trpc.orgs.deleteSelectedOrgs.useMutation({
+  const { mutate: deleteSelectedNews, isPending: isDeleting } =
+    trpc.news.deleteSelectedNews.useMutation({
       onSuccess: () => {
-        toast.success("Les organisations ont été supprimés avec succès");
-        utils.orgs.getOrgs.invalidate();
+        toast.success("Les articles ont été supprimés avec succès");
+        utils.news.getNews.invalidate();
         setOpenDelete(false);
       },
       onError: (error) => {
@@ -110,7 +110,7 @@ export function OrgsTable<TData, TValue>({
       .rows.map((row) => (row.original as { id: string }).id);
 
     if (ids.length > 0) {
-      deleteSelectedOrgs({ ids });
+      deleteSelectedNews({ ids });
     }
   };
 
@@ -118,7 +118,7 @@ export function OrgsTable<TData, TValue>({
     <div className="space-y-4">
       <div className="flex w-full flex-col gap-2 md:flex-row md:items-center md:justify-between md:gap-4">
         <div className="flex w-full items-center justify-end">
-          <OrgsToolbar table={table} />
+          <NewsToolbar table={table} />
         </div>
 
         {table.getFilteredSelectedRowModel().rows.length > 0 && (
