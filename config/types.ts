@@ -32,3 +32,4 @@ export type GetNewsResponse = RouterOutput["news"]["getNews"][number];
 
 export type PackDetailsResponse = RouterOutput["packs"]["getPack"]["pack"];
 export type DocumentResponse = RouterOutput["packs"]["getPack"]["docs"][number];
+export type VideoResponse = RouterOutput["packs"]["getPack"]["videos"][number];

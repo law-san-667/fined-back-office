@@ -208,7 +208,13 @@ export const videosRouter = createTRPCRouter({
 
       const { data: updatedVideo, error: updateError } = await supabase
         .from("pack_videos")
-        .update(data)
+        .update({
+          title: data.title,
+          description: data.description,
+          url: data.url,
+          duration: data.duration,
+          thumbnail: data.thumbnail,
+        })
         .match({ pack_id: packId, id: videoId })
         .select("*");
 

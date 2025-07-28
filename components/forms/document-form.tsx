@@ -28,6 +28,7 @@ import {
 import { Input } from "../ui/input";
 import IsLoading from "../ui/is-loading";
 import { Textarea } from "../ui/textarea";
+import { NumberInput } from "../ui/number-input";
 
 type DocumentFormProps = {
   packId: string;
@@ -41,7 +42,7 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ doc, packId }) => {
       title: doc?.title || undefined,
       description: doc?.description || undefined,
       url: doc?.url || undefined,
-      pageCount: doc?.page_count || undefined,
+      pageCount: doc?.page_count || 1,
       thumbnail: doc?.thumbnail || undefined,
     },
   });
@@ -230,7 +231,7 @@ const DocumentForm: React.FC<DocumentFormProps> = ({ doc, packId }) => {
             <FormItem>
               <FormLabel>Nombre de pages</FormLabel>
               <FormControl>
-                <Input {...field} />
+                <NumberInput {...field} />
               </FormControl>
 
               <FormMessage />

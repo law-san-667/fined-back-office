@@ -1,5 +1,5 @@
 import { shouldLog } from "@/config/global";
-import { initPackSchema } from "@/lib/validators";
+import { initPackSchema, packDetailsSchema } from "@/lib/validators";
 import { supabase } from "@/server/supabase";
 import { TRPCError } from "@trpc/server";
 import z from "zod";
@@ -157,6 +157,89 @@ export const packsRouter = createTRPCRouter({
 
       return data[0];
     }),
+    updatePack: privateProcedure.input(
+      z.object({
+        id: z.string().uuid(),
+        data: packDetailsSchema
+      })
+    ).mutation(async ({input , ctx}) => {
+            const { data: foundPack, error: foundPackError } = await supabase
+        .from("packs")
+        .select("*")
+        .eq("title", input.data.title)
+        .neq("id", input.id)
+
+
+      if (foundPackError) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Une erreur est survenue lors de la recherche du pack",
+        });
+      }
+
+      if (foundPack.length > 0) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Le pack existe déjà",
+        });
+      }
+
+      const { error: updateError } = await supabase
+        .from("packs")
+        .update(input.data)
+        .match({ id: input.id });
+
+      if (updateError) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Une erreur est survenue lors de la mise à jour du pack",
+        });
+      }
+
+      return true;
+    }),
+    updatePackTags: privateProcedure
+      .input(
+        z.object({
+          packId: z.string().uuid(),
+          tags: z.array(z.string()).min(1, "Au moins un tag est requis"),
+        })
+      ).mutation(async ({ ctx, input }) => {
+        const { packId, tags } = input;
+
+        const {data: foundPack, error: packError} = await supabase
+          .from("packs")
+          .select("id")
+          .match({ id: packId });
+
+        if (packError) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Une erreur est survenue lors de la recherche du pack",
+          });
+        }
+
+        if (!foundPack) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Le pack n'a pas été trouvé",
+          });
+        }
+
+        const { error: updateError } = await supabase
+          .from("packs")
+          .update({ tags })
+          .match({ id: packId });
+
+          if (updateError) {
+            throw new TRPCError({
+              code: "INTERNAL_SERVER_ERROR",
+              message: "Une erreur est survenue lors de la mise à jour du pack",
+            });
+          }
+
+        return true;
+      }),
   deleteSelectedPacks: privateProcedure
     .input(z.object({ ids: z.array(z.string()) }))
     .mutation(async ({ ctx, input }) => {

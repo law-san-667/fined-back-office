@@ -16,11 +16,7 @@ import {
   restrictToParentElement,
   restrictToVerticalAxis,
 } from "@dnd-kit/modifiers";
-import {
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import {
   FileText,
   FileVideo,
@@ -51,16 +47,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./ui/dialog";
+import { MultiSelect } from "./ui/extension/multi-select";
 import IsLoading from "./ui/is-loading";
 import { Label } from "./ui/label";
 import { ScrollArea } from "./ui/scroll-area";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/select";
 import { Separator } from "./ui/separator";
 
 type PackManagementProps = {
@@ -78,12 +68,37 @@ const PackManagement: React.FC<PackManagementProps> = ({ id }) => {
   );
 
   const [activeId, setActiveId] = React.useState<string | null>(null);
+  const [selectedTags, setSelectedTags] = React.useState<string[]>([]);
+
+  const handleAddTag = (tags: string[]) => {
+    setSelectedTags(tags);
+  };
+
+  const handleCleanTags = () => {
+    setSelectedTags([]);
+  };
+
+  const handleRemoveTag = (tag: string) => {
+    setSelectedTags((prev) => prev.filter((t) => t !== tag));
+  };
 
   const [mode, setMode] = React.useState<"edit-pack" | "edit-tags" | "none">(
     "none"
   );
 
   const utils = trpc.useUtils();
+
+  const { mutate: updatePackTags, isPending: isUpdatingTags } =
+    trpc.packs.updatePackTags.useMutation({
+      onSuccess: () => {
+        toast.success("Les tags ont été modifiés avec succès");
+        utils.packs.getPack.invalidate({ id });
+        setMode("none");
+      },
+      onError: (error) => {
+        toast.error(error.message);
+      },
+    });
 
   const { mutate: deletePack, isPending: isDeletingPack } =
     trpc.packs.deletePack.useMutation({
@@ -245,7 +260,11 @@ const PackManagement: React.FC<PackManagementProps> = ({ id }) => {
                   {isDeletingPack ? <IsLoading /> : "Supprimer"}
                 </Button>
                 <DialogClose asChild>
-                  <Button disabled={isDeletingPack} variant={"outline"}>
+                  <Button
+                    disabled={isDeletingPack}
+                    variant={"outline"}
+                    size={"sm"}
+                  >
                     Annuler
                   </Button>
                 </DialogClose>
@@ -267,7 +286,9 @@ const PackManagement: React.FC<PackManagementProps> = ({ id }) => {
                 </div>
 
                 {mode !== "edit-pack" ? (
-                  <Button onClick={() => setMode("edit-pack")}>Modifier</Button>
+                  <Button size={"sm"} onClick={() => setMode("edit-pack")}>
+                    Modifier
+                  </Button>
                 ) : (
                   <Button variant={"outline"} onClick={() => setMode("none")}>
                     Annuler
@@ -281,6 +302,7 @@ const PackManagement: React.FC<PackManagementProps> = ({ id }) => {
                 pack={data.pack}
                 mode={mode}
                 tags={tags.map((tag) => ({ value: tag.slug, label: tag.name }))}
+                setMode={setMode}
               />
 
               <Separator />
@@ -329,43 +351,101 @@ const PackManagement: React.FC<PackManagementProps> = ({ id }) => {
 
               {/* Tags Section */}
               <div className="space-y-4">
-                <div className="flex items-center gap-2">
-                  <Tag className="w-4 h-4 text-purple-600" />
-                  <Label className="font-medium">Tags & Categories</Label>
+                <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                  <div className="flex items-center gap-2">
+                    <Tag className="w-4 h-4 text-purple-600" />
+                    <Label className="font-medium">Tags & Categories</Label>
+                  </div>
+
+                  <div className="flex gap-3">
+                    <Button
+                      size={"sm"}
+                      disabled={isDeletingPack || isUpdatingTags}
+                      onClick={() => {
+                        if (mode !== "edit-tags") {
+                          setMode("edit-tags");
+                        } else {
+                          if (selectedTags.length <= 0) {
+                            return toast.info("Aucun tag sélectionné");
+                          }
+
+                          updatePackTags({
+                            packId: id,
+                            tags: selectedTags,
+                          });
+                        }
+                      }}
+                    >
+                      {isUpdatingTags ? (
+                        <IsLoading />
+                      ) : mode === "edit-tags" ? (
+                        "Enregistrer"
+                      ) : (
+                        "Modifier les tags"
+                      )}
+                    </Button>
+
+                    {mode === "edit-tags" && (
+                      <Button
+                        disabled={isDeletingPack || isUpdatingTags}
+                        variant={"outline"}
+                        size={"sm"}
+                        onClick={() => {
+                          setMode("none");
+                          handleCleanTags();
+                        }}
+                      >
+                        Annuler
+                      </Button>
+                    )}
+                  </div>
                 </div>
 
                 <div className="flex flex-wrap gap-2 min-h-[2.5rem] p-3 border border-slate-200 rounded-lg bg-slate-50/50">
-                  {tags.length > 0 ? (
-                    tags.map((tag) => (
-                      <Badge key={tag.slug} variant="secondary">
-                        {tag.name}
-                        <XIcon
-                          className="w-3 h-3 ml-1 cursor-pointer hover:text-purple-900"
-                          //   onClick={() => removeTag(tag)}
-                        />
-                      </Badge>
-                    ))
+                  {data.pack.tags.length > 0 ? (
+                    tags.map((tag) => {
+                      const foundTag = data.pack.tags.find(
+                        (t) => t === tag.slug
+                      );
+
+                      if (!foundTag) {
+                        return null;
+                      }
+
+                      return (
+                        <Badge key={tag.slug} variant="secondary">
+                          {tag.name}
+                          <XIcon
+                            className="w-3 h-3 ml-1 cursor-pointer hover:text-purple-900"
+                            //   onClick={() => removeTag(tag)}
+                          />
+                        </Badge>
+                      );
+                    })
                   ) : (
                     <span className="text-muted-foreground text-sm">
-                      No tags added yet
+                      Aucun tag sélectionné pour ce pack.
                     </span>
                   )}
                 </div>
 
                 <div className="flex gap-3">
                   {availableTags.length > 0 ? (
-                    <Select onValueChange={(value) => {}}>
-                      <SelectTrigger className="w-64">
-                        <SelectValue placeholder="Select from popular tags" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {availableTags.map((tag) => (
-                          <SelectItem key={tag.slug} value={tag.slug}>
-                            {tag.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <MultiSelect
+                      placeholder="Choisissez les tags"
+                      disabled={
+                        isDeletingPack || isUpdatingTags || mode !== "edit-tags"
+                      }
+                      options={availableTags.map((tag) => ({
+                        label: tag.name,
+                        value: tag.slug,
+                      }))}
+                      onValueChange={(val) => {
+                        handleAddTag(val);
+                      }}
+                      animation={0}
+                      maxCount={3}
+                    />
                   ) : (
                     <span className="text-muted-foreground text-sm">
                       Aucun tag disponible. Vous les avez tous sélectionnés.
@@ -415,39 +495,43 @@ const PackManagement: React.FC<PackManagementProps> = ({ id }) => {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <SortableContext
+                  <div className="space-y-3">
+                    {data.docs.map((doc) => (
+                      <SortableItem
+                        packId={id}
+                        data={doc}
+                        key={doc.id}
+                        id={doc.id}
+                        type="document"
+                        title={doc.title}
+                        description={doc.description || ""}
+                        metadata={`${doc.page_count} pages`}
+                        thumbnail={doc.thumbnail}
+                        isDeleteLoading={isDeletingDoc}
+                        onDelete={() => {
+                          deleteDoc({ docId: doc.id, packId: id });
+                        }}
+                      />
+                    ))}
+                    {data.docs.length === 0 && (
+                      <div className="text-center py-12 text-muted-foreground">
+                        <FileText className="w-12 h-12 mx-auto mb-4 text-muted-foreground/50" />
+                        <p className="text-lg font-medium mb-2">
+                          Aucun document pour le moment
+                        </p>
+                        <p className="text-sm">
+                          Ajoutez un premier document pour commencer
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* <SortableContext
                     items={data.docs.map((doc) => doc.id)}
                     strategy={verticalListSortingStrategy}
                   >
-                    <div className="space-y-3">
-                      {data.docs.map((doc) => (
-                        <SortableItem
-                          key={doc.id}
-                          id={doc.id}
-                          type="document"
-                          title={doc.title}
-                          description={doc.description || ""}
-                          metadata={`${doc.page_count} pages`}
-                          thumbnail={doc.thumbnail}
-                          isDeleteLoading={isDeletingDoc}
-                          onDelete={() => {
-                            deleteDoc({ docId: doc.id, packId: id });
-                          }}
-                        />
-                      ))}
-                      {data.docs.length === 0 && (
-                        <div className="text-center py-12 text-muted-foreground">
-                          <FileText className="w-12 h-12 mx-auto mb-4 text-muted-foreground/50" />
-                          <p className="text-lg font-medium mb-2">
-                            Aucun document pour le moment
-                          </p>
-                          <p className="text-sm">
-                            Ajoutez un premier document pour commencer
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  </SortableContext>
+                    
+                  </SortableContext> */}
                 </CardContent>
               </Card>
 
@@ -482,39 +566,42 @@ const PackManagement: React.FC<PackManagementProps> = ({ id }) => {
                 </CardHeader>
                 <CardContent>
                   <ScrollArea className="h-[40rem] w-full">
-                    <SortableContext
+                    <div className="space-y-3">
+                      {data.videos.map((video) => (
+                        <SortableItem
+                          packId={id}
+                          data={video}
+                          key={video.id}
+                          id={video.id}
+                          type="video"
+                          title={video.title}
+                          description={video.description || ""}
+                          metadata={`${video.duration} min`}
+                          thumbnail={video.thumbnail}
+                          isDeleteLoading={isDeletingVideo}
+                          onDelete={() => {
+                            deleteVideo({ packId: id, videoId: video.id });
+                          }}
+                        />
+                      ))}
+                      {data.videos.length === 0 && (
+                        <div className="text-center py-12 text-muted-foreground">
+                          <Play className="w-12 h-12 mx-auto mb-4 text-muted-foreground/50" />
+                          <p className="text-lg font-medium mb-2">
+                            Aucune vidéo pour le moment
+                          </p>
+                          <p className="text-sm">
+                            Ajoutez une première vidéo pour commencer
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                    {/* <SortableContext
                       items={data.videos.map((video) => video.id)}
                       strategy={verticalListSortingStrategy}
                     >
-                      <div className="space-y-3">
-                        {data.videos.map((video) => (
-                          <SortableItem
-                            key={video.id}
-                            id={video.id}
-                            type="video"
-                            title={video.title}
-                            description={video.description || ""}
-                            metadata={`${video.duration} min`}
-                            thumbnail={video.thumbnail}
-                            isDeleteLoading={isDeletingVideo}
-                            onDelete={() => {
-                              deleteVideo({ packId: id, videoId: video.id });
-                            }}
-                          />
-                        ))}
-                        {data.videos.length === 0 && (
-                          <div className="text-center py-12 text-muted-foreground">
-                            <Play className="w-12 h-12 mx-auto mb-4 text-muted-foreground/50" />
-                            <p className="text-lg font-medium mb-2">
-                              Aucune vidéo pour le moment
-                            </p>
-                            <p className="text-sm">
-                              Ajoutez une première vidéo pour commencer
-                            </p>
-                          </div>
-                        )}
-                      </div>
-                    </SortableContext>
+                      
+                    </SortableContext> */}
                   </ScrollArea>
                 </CardContent>
               </Card>

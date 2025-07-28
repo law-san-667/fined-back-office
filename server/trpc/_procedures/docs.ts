@@ -211,7 +211,12 @@ export const docsRouter = createTRPCRouter({
 
       const { data: updatedDoc, error: updateError } = await supabase
         .from("pack_documents")
-        .update(data)
+        .update({
+          title: data.title,
+          description: data.description,
+          url: data.url,
+          page_count: data.pageCount,
+        })
         .match({ pack_id: packId, id: docId })
         .select("*");
 

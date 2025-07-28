@@ -3,7 +3,9 @@
 import { PackDetailsResponse } from "@/config/types";
 import { usePackThumbnailUpload } from "@/hooks/use-uploads";
 import { packDetailsSchema } from "@/lib/validators";
+import { trpc } from "@/server/trpc/client";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { isEqual } from "lodash";
 import { XIcon } from "lucide-react";
 import Image from "next/image";
 import React from "react";
@@ -24,6 +26,7 @@ import {
 import { Input } from "../ui/input";
 import IsLoading from "../ui/is-loading";
 import { Label } from "../ui/label";
+import { NumberInput } from "../ui/number-input";
 import { Switch } from "../ui/switch";
 import { Textarea } from "../ui/textarea";
 
@@ -31,12 +34,16 @@ type PackDetailsFornProps = {
   pack: PackDetailsResponse;
   mode: string;
   tags: { value: string; label: string }[];
+  setMode: React.Dispatch<
+    React.SetStateAction<"edit-pack" | "none" | "edit-tags">
+  >;
 };
 
 const PackDetailsForn: React.FC<PackDetailsFornProps> = ({
   mode,
   pack,
   tags,
+  setMode,
 }) => {
   const disabled = mode !== "edit-pack";
 
@@ -53,6 +60,21 @@ const PackDetailsForn: React.FC<PackDetailsFornProps> = ({
     },
   });
 
+  const utils = trpc.useUtils();
+
+  const { mutate: updatePack, isPending: isUpdating } =
+    trpc.packs.updatePack.useMutation({
+      onSuccess: () => {
+        toast.success("Le pack a été modifié avec succès");
+        utils.packs.getPack.refetch({ id: pack.id });
+        setMode("none");
+        // form.reset();
+      },
+      onError: (error) => {
+        toast.error(error.message);
+      },
+    });
+
   React.useEffect(() => {
     if (mode !== "edit-pack") {
       form.reset();
@@ -61,8 +83,25 @@ const PackDetailsForn: React.FC<PackDetailsFornProps> = ({
 
   const props = usePackThumbnailUpload();
 
+  React.useEffect(() => {
+    if (props.isSuccess) {
+      form.setValue(
+        "image",
+        `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE}/${props.successes[0].path}`
+      );
+    }
+  }, [props]);
+
   const onSubmit = async (values: z.infer<typeof packDetailsSchema>) => {
     try {
+      if (isEqual(values, pack)) {
+        return toast.info("Les données n'ont pas été modifiées");
+      }
+
+      updatePack({
+        id: pack.id,
+        data: values,
+      });
     } catch (error) {
       console.error("Form submission error", error);
       toast.error("Ooops...", {
@@ -163,7 +202,7 @@ const PackDetailsForn: React.FC<PackDetailsFornProps> = ({
                 <FormItem>
                   <FormLabel>Prix en FCFA</FormLabel>
                   <FormControl>
-                    <Input type="number" {...field} />
+                    <NumberInput {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -242,8 +281,12 @@ const PackDetailsForn: React.FC<PackDetailsFornProps> = ({
         </div>
 
         {!disabled && (
-          <Button disabled={disabled} className="w-full col-span-full">
-            {disabled ? <IsLoading /> : "Sauvegarder"}
+          <Button
+            disabled={disabled || isUpdating}
+            type="submit"
+            className="w-full col-span-full"
+          >
+            {isUpdating ? <IsLoading /> : "Sauvegarder"}
           </Button>
         )}
       </form>

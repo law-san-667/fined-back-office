@@ -5,10 +5,22 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Edit, FileText, GripVertical, Play, Trash2 } from "lucide-react";
+import { Edit, FileText, Play, Trash2 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog";
 import IsLoading from "./ui/is-loading";
+import DocumentForm from "./forms/document-form";
+import { DocumentResponse, VideoResponse } from "@/config/types";
+import VideoForm from "./forms/video-form";
 
 interface SortableItemProps {
+  packId: string;
+  data?: DocumentResponse | VideoResponse;
   id: string;
   type: "document" | "video";
   title: string;
@@ -20,6 +32,8 @@ interface SortableItemProps {
 }
 
 export function SortableItem({
+  packId,
+  data,
   id,
   type,
   title,
@@ -53,13 +67,13 @@ export function SortableItem({
     >
       <CardContent className="p-4">
         <div className="flex items-start gap-3">
-          <div
+          {/* <div
             className="flex items-center justify-center w-6 h-6 rounded bg-primary/50 cursor-grab active:cursor-grabbing touch-none"
             {...attributes}
             {...listeners}
           >
             <GripVertical className="w-4 h-4 text-black" />
-          </div>
+          </div> */}
 
           <div className="flex-1 min-w-0">
             <div className="flex items-start gap-3">
@@ -101,14 +115,38 @@ export function SortableItem({
                   </div>
 
                   <div className="flex gap-1">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      //   onClick={onEdit}
-                      className="h-8 w-8 p-0"
-                    >
-                      <Edit className="w-3 h-3" />
-                    </Button>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          //   onClick={onEdit}
+                          className="h-8 w-8 p-0"
+                        >
+                          <Edit className="w-3 h-3" />
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>
+                            {type === "document"
+                              ? "Modifier le document"
+                              : "Modifier la vidéo"}
+                          </DialogTitle>
+                        </DialogHeader>
+                        {type === "document" ? (
+                          <DocumentForm
+                            packId={packId}
+                            doc={data as DocumentResponse}
+                          />
+                        ) : (
+                          <VideoForm
+                            packId={packId}
+                            video={data as VideoResponse}
+                          />
+                        )}
+                      </DialogContent>
+                    </Dialog>
                     <Button
                       disabled={isDeleteLoading}
                       variant={"destructive"}

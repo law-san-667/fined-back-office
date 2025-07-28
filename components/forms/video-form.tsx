@@ -1,6 +1,6 @@
 "use client";
 
-import { DocumentResponse } from "@/config/types";
+import { DocumentResponse, VideoResponse } from "@/config/types";
 import { useVideoThumbnailUpload, useVideoUpload } from "@/hooks/use-uploads";
 import { videoSchema } from "@/lib/validators";
 import { trpc } from "@/server/trpc/client";
@@ -25,21 +25,22 @@ import {
 import { Input } from "../ui/input";
 import IsLoading from "../ui/is-loading";
 import { Textarea } from "../ui/textarea";
+import { NumberInput } from "../ui/number-input";
 
 type VideoFormProps = {
   packId: string;
-  doc?: DocumentResponse;
+  video?: VideoResponse;
 };
 
-const VideoForm: React.FC<VideoFormProps> = ({ doc, packId }) => {
+const VideoForm: React.FC<VideoFormProps> = ({ video, packId }) => {
   const form = useForm<z.infer<typeof videoSchema>>({
     resolver: zodResolver(videoSchema),
     defaultValues: {
-      title: doc?.title || undefined,
-      description: doc?.description || undefined,
-      url: doc?.url || undefined,
-      duration: doc?.page_count || undefined,
-      thumbnail: doc?.thumbnail || undefined,
+      title: video?.title || undefined,
+      description: video?.description || undefined,
+      url: video?.url || undefined,
+      duration: video?.duration || undefined,
+      thumbnail: video?.thumbnail || undefined,
     },
   });
 
@@ -48,7 +49,7 @@ const VideoForm: React.FC<VideoFormProps> = ({ doc, packId }) => {
   const { mutate: createVideo, isPending: isCreating } =
     trpc.videos.createVideo.useMutation({
       onSuccess: () => {
-        toast.success("Le document a été créé avec succès");
+        toast.success("La vidéo a été créée avec succès");
         utils.packs.getPack.invalidate({ id: packId });
         form.reset({
           title: "",
@@ -66,7 +67,7 @@ const VideoForm: React.FC<VideoFormProps> = ({ doc, packId }) => {
   const { mutate: updateVideo, isPending: isUpdating } =
     trpc.videos.updateVideo.useMutation({
       onSuccess: () => {
-        toast.success("Le document a été modifié avec succès");
+        toast.success("La vidéo a été modifiée avec succès");
         utils.packs.getPack.invalidate({ id: packId });
         form.reset();
       },
@@ -96,14 +97,14 @@ const VideoForm: React.FC<VideoFormProps> = ({ doc, packId }) => {
 
   const onSubmit = async (values: z.infer<typeof videoSchema>) => {
     try {
-      if (doc) {
-        if (isEqual(doc, values)) {
+      if (video) {
+        if (isEqual(video, values)) {
           return toast.info("Les données n'ont pas été modifiées");
         }
 
         updateVideo({
           packId: packId,
-          videoId: doc.id,
+          videoId: video.id,
           data: values,
         });
       } else {
@@ -243,7 +244,7 @@ const VideoForm: React.FC<VideoFormProps> = ({ doc, packId }) => {
             <FormItem>
               <FormLabel>Durée de la vidéo (minutes)</FormLabel>
               <FormControl>
-                <Input {...field} />
+                <NumberInput {...field} />
               </FormControl>
 
               <FormMessage />
@@ -254,7 +255,7 @@ const VideoForm: React.FC<VideoFormProps> = ({ doc, packId }) => {
         <Button disabled={isCreating || isUpdating} className="w-full">
           {isCreating || isUpdating ? (
             <IsLoading />
-          ) : doc ? (
+          ) : video ? (
             "Modifier"
           ) : (
             "Créer"

@@ -38,7 +38,7 @@ export const initPackSchema = z.object({
     })
     .url("L'image doit être une URL valide")
     .optional(),
-  tags: z.array(z.string()),
+  tags: z.array(z.string()).min(1, "Au moins un tag est requis"),
 });
 
 export const packDetailsSchema = z.object({
@@ -169,7 +169,7 @@ export const documentSchema = z.object({
     message: "Le nombre de pages doit être un nombre",
     required_error: "Le nombre de pages est requis",
     invalid_type_error: "Le nombre de pages doit être un nombre",
-  }),
+  }).min(1, "Le nombre de pages doit être supérieur à 0"),
   thumbnail: z
     .string({
       required_error: "L'image est requis",
@@ -202,7 +202,7 @@ export const videoSchema = z.object({
     message: "Le nombre de pages doit être un nombre",
     required_error: "Le nombre de pages est requis",
     invalid_type_error: "Le nombre de pages doit être un nombre",
-  }),
+  }).min(1, "Le nombre de minutes doit être supérieur à 0"),
   thumbnail: z
     .string({
       required_error: "L'image est requis",
