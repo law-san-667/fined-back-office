@@ -78,10 +78,6 @@ const PackManagement: React.FC<PackManagementProps> = ({ id }) => {
     setSelectedTags([]);
   };
 
-  const handleRemoveTag = (tag: string) => {
-    setSelectedTags((prev) => prev.filter((t) => t !== tag));
-  };
-
   const [mode, setMode] = React.useState<"edit-pack" | "edit-tags" | "none">(
     "none"
   );
@@ -92,6 +88,18 @@ const PackManagement: React.FC<PackManagementProps> = ({ id }) => {
     trpc.packs.updatePackTags.useMutation({
       onSuccess: () => {
         toast.success("Les tags ont été modifiés avec succès");
+        utils.packs.getPack.invalidate({ id });
+        setMode("none");
+      },
+      onError: (error) => {
+        toast.error(error.message);
+      },
+    });
+
+  const { mutate: removePackTag, isPending: isDeletingTag } =
+    trpc.packs.removePackTag.useMutation({
+      onSuccess: () => {
+        toast.success("Le tag a été supprimé avec succès");
         utils.packs.getPack.invalidate({ id });
         setMode("none");
       },
@@ -415,10 +423,17 @@ const PackManagement: React.FC<PackManagementProps> = ({ id }) => {
                       return (
                         <Badge key={tag.slug} variant="secondary">
                           {tag.name}
-                          <XIcon
-                            className="w-3 h-3 ml-1 cursor-pointer hover:text-purple-900"
-                            //   onClick={() => removeTag(tag)}
-                          />
+                          <Button
+                            size="icon"
+                            variant={"ghost"}
+                            className="size-4 rounded-full"
+                            disabled={isDeletingPack || isDeletingTag}
+                            onClick={() =>
+                              removePackTag({ packId: id, tag: tag.slug })
+                            }
+                          >
+                            <XIcon />
+                          </Button>
                         </Badge>
                       );
                     })

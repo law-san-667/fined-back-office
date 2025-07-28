@@ -60,7 +60,7 @@ export const videosRouter = createTRPCRouter({
         });
       }
 
-      if (!foundPack) {
+      if (!foundPack || foundPack.length < 0) {
         if (shouldLog) console.error("No data found in packs");
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -177,7 +177,7 @@ export const videosRouter = createTRPCRouter({
         });
       }
 
-      if (!foundPack) {
+      if (!foundPack || foundPack.length < 0) {
         if (shouldLog) console.error("No data found in packs");
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",

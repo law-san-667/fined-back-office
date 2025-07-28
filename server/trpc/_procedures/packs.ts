@@ -219,7 +219,7 @@ export const packsRouter = createTRPCRouter({
           });
         }
 
-        if (!foundPack) {
+        if (!foundPack || foundPack.length < 0) {
           throw new TRPCError({
             code: "INTERNAL_SERVER_ERROR",
             message: "Le pack n'a pas été trouvé",
@@ -240,6 +240,51 @@ export const packsRouter = createTRPCRouter({
 
         return true;
       }),
+      removePackTag: privateProcedure
+        .input(
+          z.object({
+            packId: z.string().uuid(),
+            tag: z.string().min(1, "Le tag est requis"),
+          })
+        )
+        .mutation(async ({ ctx, input }) => {
+          const { packId, tag } = input;
+
+          const {data: foundPack, error: packError} = await supabase
+            .from("packs")
+            .select("id, tags")
+            .match({ id: packId });
+
+          if (packError) {
+            throw new TRPCError({
+              code: "INTERNAL_SERVER_ERROR",
+              message: "Une erreur est survenue lors de la recherche du pack",
+            });
+          }
+
+          if (!foundPack || foundPack.length < 0) {
+            throw new TRPCError({
+              code: "INTERNAL_SERVER_ERROR",
+              message: "Le pack n'a pas été trouvé",
+            });
+          }
+
+          const newTags = foundPack[0].tags.filter((t) => t !== tag);
+
+          const { error: updateError } = await supabase
+            .from("packs")
+            .update({ tags: newTags })
+            .match({ id: packId });
+
+            if (updateError) {
+              throw new TRPCError({
+                code: "INTERNAL_SERVER_ERROR",
+                message: "Une erreur est survenue lors de la mise à jour du pack",
+              });
+            }
+
+          return true;
+        }),
   deleteSelectedPacks: privateProcedure
     .input(z.object({ ids: z.array(z.string()) }))
     .mutation(async ({ ctx, input }) => {
