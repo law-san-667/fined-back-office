@@ -3,20 +3,23 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { DocumentResponse, VideoResponse } from "@/config/types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Edit, FileText, Play, Trash2 } from "lucide-react";
+import DocumentForm from "./forms/document-form";
+import VideoForm from "./forms/video-form";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
+  DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "./ui/dialog";
 import IsLoading from "./ui/is-loading";
-import DocumentForm from "./forms/document-form";
-import { DocumentResponse, VideoResponse } from "@/config/types";
-import VideoForm from "./forms/video-form";
 
 interface SortableItemProps {
   packId: string;
@@ -147,18 +150,54 @@ export function SortableItem({
                         )}
                       </DialogContent>
                     </Dialog>
-                    <Button
-                      disabled={isDeleteLoading}
-                      variant={"destructive"}
-                      size="sm"
-                      onClick={onDelete}
-                    >
-                      {isDeleteLoading ? (
-                        <IsLoading />
-                      ) : (
-                        <Trash2 className="w-3 h-3" />
-                      )}
-                    </Button>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button
+                          disabled={isDeleteLoading}
+                          variant={"destructive"}
+                          size="sm"
+                        >
+                          {isDeleteLoading ? (
+                            <IsLoading />
+                          ) : (
+                            <Trash2 className="w-3 h-3" />
+                          )}
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>
+                            {type === "document"
+                              ? "Supprimer le document"
+                              : "Supprimer la vidéo"}
+                          </DialogTitle>
+                          <DialogDescription>
+                            Vous êtes sur le point de supprimer{" "}
+                            {type === "document" ? "le document" : "la vidéo"}{" "}
+                            <span className="text-primary">"{title}". </span>
+                            Cette action sera appliquée à tout le système.
+                          </DialogDescription>
+                        </DialogHeader>
+
+                        <DialogFooter>
+                          <DialogClose asChild>
+                            <Button
+                              variant={"destructive"}
+                              onClick={async () => {
+                                // setOpenDelete(false);
+                                onDelete();
+                              }}
+                            >
+                              Supprimer
+                            </Button>
+                          </DialogClose>
+
+                          <DialogClose asChild>
+                            <Button variant={"outline"}> Annuler </Button>
+                          </DialogClose>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
                   </div>
                 </div>
               </div>
