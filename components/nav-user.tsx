@@ -18,20 +18,20 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { trpc } from "@/server/trpc/client";
+import { useRouter } from "next/navigation";
 import IsLoading from "./ui/is-loading";
 import { Skeleton } from "./ui/skeleton";
 
-const user = {
-  name: "Ikbal",
-  email: "m@example.com",
-  avatar: "/avatars/shadcn.jpg",
-};
-
 export function NavUser({}) {
+  const router = useRouter();
   const { isMobile } = useSidebar();
 
   const { data, isLoading } = trpc.auth.me.useQuery();
-  const { mutate: logout, isPending } = trpc.auth.logout.useMutation();
+  const { mutate: logout, isPending } = trpc.auth.logout.useMutation({
+    onSuccess: () => {
+      router.push("/");
+    },
+  });
 
   if (isLoading) {
     return <Skeleton className="h-14" />;
