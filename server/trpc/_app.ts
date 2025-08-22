@@ -1,3 +1,4 @@
+import { authRouter } from "./_procedures/auth";
 import { docsRouter } from "./_procedures/docs";
 import { forumChannelsRouter } from "./_procedures/forum-channels";
 import { forumPostsRouter } from "./_procedures/forum-posts";
@@ -11,6 +12,7 @@ import { videosRouter } from "./_procedures/videos";
 import { createTRPCRouter } from "./init";
 
 export const appRouter = createTRPCRouter({
+  auth: authRouter,
   orgs: orgsRouter,
   packs: packsRouter,
   docs: docsRouter,

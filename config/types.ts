@@ -1,5 +1,6 @@
 import type { AppRouter } from "@/server/trpc/_app";
 import type { inferRouterOutputs } from "@trpc/server";
+import { JWTPayload } from "jose";
 
 export type SocialLinks = {
   facebook?: string;
@@ -33,3 +34,13 @@ export type GetNewsResponse = RouterOutput["news"]["getNews"][number];
 export type PackDetailsResponse = RouterOutput["packs"]["getPack"]["pack"];
 export type DocumentResponse = RouterOutput["packs"]["getPack"]["docs"][number];
 export type VideoResponse = RouterOutput["packs"]["getPack"]["videos"][number];
+
+export type BackendResponse<T> = {
+  error: string | null;
+  success: boolean;
+  data: T | null;
+};
+
+export interface JwtPayload extends JWTPayload {
+  role: "ADMIN" | "CUSTOMER";
+}

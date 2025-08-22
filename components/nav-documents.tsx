@@ -21,7 +21,7 @@ export function NavDocuments({
 }) {
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Communications</SidebarGroupLabel>
+      <SidebarGroupLabel>Configurations</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
           <SidebarMenuItem key={item.name}>
