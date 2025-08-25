@@ -101,6 +101,7 @@ export function LoginForm({
                     <FormControl>
                       <Input
                         placeholder="exemple@email.com"
+                        className="bg-zinc-50 shadow-md placeholder:text-lg"
                         type="email"
                         {...field}
                       />

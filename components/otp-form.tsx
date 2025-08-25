@@ -54,7 +54,7 @@ const OtpForm: React.FC<OtpFormProps> = ({ email }) => {
         Cookies.set("accessToken", res.accessToken);
         Cookies.set("refreshToken", res.refreshToken);
 
-        router.push("/dashboard");
+        router.push("/dashboard/orgs");
       }
     },
     onError: (error) => {
