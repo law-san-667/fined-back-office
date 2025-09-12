@@ -194,10 +194,10 @@ export const videoSchema = z.object({
     .optional(),
   url: z
     .string({
-      required_error: "L'URL est requis",
       invalid_type_error: "L'URL doit être une chaîne de caractères",
     })
-    .url("L'URL doit être une URL valide"),
+    .url("L'URL doit être une URL valide")
+    .optional(),
   duration: z.coerce.number({
     message: "Le nombre de pages doit être un nombre",
     required_error: "Le nombre de pages est requis",
