@@ -123,7 +123,7 @@ export const videosRouter = createTRPCRouter({
         .insert({
           title,
           description,
-          url,
+          url: url ?? "",
           duration,
           thumbnail,
           pack_id: packId,
@@ -211,7 +211,7 @@ export const videosRouter = createTRPCRouter({
         .update({
           title: data.title,
           description: data.description,
-          url: data.url,
+          url: data.url ?? "",
           duration: data.duration,
           thumbnail: data.thumbnail,
         })
