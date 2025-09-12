@@ -200,9 +200,8 @@ export const videoSchema = z.object({
     .optional(),
   duration: z.coerce.number({
     message: "Le nombre de pages doit être un nombre",
-    required_error: "Le nombre de pages est requis",
     invalid_type_error: "Le nombre de pages doit être un nombre",
-  }).min(1, "Le nombre de minutes doit être supérieur à 0"),
+  }).min(0, "Le nombre de minutes doit être supérieur ou égal à 0"),
   thumbnail: z
     .string({
       required_error: "L'image est requis",

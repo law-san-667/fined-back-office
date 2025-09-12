@@ -124,7 +124,7 @@ export const videosRouter = createTRPCRouter({
           title,
           description,
           url: url ?? "",
-          duration,
+          duration: duration ?? 0,
           thumbnail,
           pack_id: packId,
           order: newOrder,
