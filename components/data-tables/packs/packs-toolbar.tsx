@@ -27,9 +27,9 @@ export function PacksToolbar<TData>({ table }: PacksToolbarProps<TData>) {
       <div className="flex items-center space-x-4">
         <Input
           placeholder="Filtrer par le nom..."
-          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+          value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("name")?.setFilterValue(event.target.value)
+            table.getColumn("title")?.setFilterValue(event.target.value)
           }
           className="w-fit"
         />

@@ -27,7 +27,7 @@ export const ADMIN_MENU = {
     },
     {
       title: "Utilisateurs",
-      url: "#",
+      url: "/dashboard/users",
       icon: IconUsers,
     },
     {

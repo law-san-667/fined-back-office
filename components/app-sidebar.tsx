@@ -17,6 +17,7 @@ import { ADMIN_MENU, NAV_SECONDARY, ORG_MENU } from "@/config/global";
 import { trpc } from "@/server/trpc/client";
 import { NavDocuments } from "./nav-documents";
 import { NavSecondary } from "./nav-secondary";
+import Link from "next/link";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { data: authed, isLoading } = trpc.auth.me.useQuery();
@@ -28,21 +29,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              className="data-[slot=sidebar-menu-button]:!p-1.5"
-            >
-              <div className="w-full h-fit">
-                <img
-                  src="/fined-logo.png"
-                  alt="logo"
-                  className="w-8 h-full object-cover"
-                />
-                <span className="text-base font-semibold">
-                  Fined - Dashboard
-                </span>
-              </div>
-            </SidebarMenuButton>
+            <Link href={"/dashboard"}>
+                <div className="w-full h-fit hover:cursor-pointer flex-row flex items-center gap-2">
+                  <img
+                    src="/fined-logo.png"
+                    alt="logo"
+                    className="w-8 h-full object-cover"
+                  />
+                  <span className="text-base font-semibold">
+                    Fined - Dashboard
+                  </span>
+                </div>
+            </Link>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>

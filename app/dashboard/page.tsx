@@ -1,17 +1,15 @@
-import { ChartAreaInteractive } from "@/components/chart-area-interactive";
-import { DataTable } from "@/components/data-table";
-import { SectionCards } from "@/components/section-cards";
-
-import data from "./data.json";
+import { DashboardStatsCards } from "@/components/dashboard-stats-cards";
+import { DashboardWelcome } from "@/components/dashboard-welcome";
+import { RecentForumPosts } from "@/components/recent-forum-posts";
 
 export default function Page() {
   return (
-    <>
-      <SectionCards />
+    <div className="space-y-8">
+      <DashboardWelcome />
+      <DashboardStatsCards />
       <div className="px-4 lg:px-6">
-        <ChartAreaInteractive />
+        <RecentForumPosts />
       </div>
-      <DataTable data={data} />
-    </>
+    </div>
   );
 }

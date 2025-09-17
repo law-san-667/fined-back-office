@@ -1,4 +1,5 @@
 import { authRouter } from "./_procedures/auth";
+import { dashboardRouter } from "./_procedures/dashboard";
 import { docsRouter } from "./_procedures/docs";
 import { forumChannelsRouter } from "./_procedures/forum-channels";
 import { forumPostsRouter } from "./_procedures/forum-posts";
@@ -8,12 +9,15 @@ import { orgsRouter } from "./_procedures/orgs";
 import { packTagsRouter } from "./_procedures/pack-tags";
 import { packsRouter } from "./_procedures/packs";
 import { postTagsRouter } from "./_procedures/post-tags";
+import { usersRouter } from "./_procedures/users";
 import { videosRouter } from "./_procedures/videos";
 import { createTRPCRouter } from "./init";
 
 export const appRouter = createTRPCRouter({
   auth: authRouter,
+  dashboard: dashboardRouter,
   orgs: orgsRouter,
+  users: usersRouter,
   packs: packsRouter,
   docs: docsRouter,
   videos: videosRouter,

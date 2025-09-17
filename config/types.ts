@@ -35,6 +35,11 @@ export type PackDetailsResponse = RouterOutput["packs"]["getPack"]["pack"];
 export type DocumentResponse = RouterOutput["packs"]["getPack"]["docs"][number];
 export type VideoResponse = RouterOutput["packs"]["getPack"]["videos"][number];
 
+export type UsersResponse = RouterOutput["users"]["getUsers"][number];
+
+export type DashboardStatsResponse = RouterOutput["dashboard"]["getStats"];
+export type RecentForumPostsResponse = RouterOutput["dashboard"]["getRecentForumPosts"][number];
+
 export type BackendResponse<T> = {
   error: string | null;
   success: boolean;

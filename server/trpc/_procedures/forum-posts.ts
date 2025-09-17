@@ -9,7 +9,7 @@ export const forumPostsRouter = createTRPCRouter({
   getPosts: privateProcedure.query(async ({ ctx }) => {
     const { data, error } = await supabase
       .from("forum_posts")
-      .select("*, users(*)");
+      .select("*, customer_accounts(*)");
 
     if (error) {
       if (shouldLog) console.error(error);
