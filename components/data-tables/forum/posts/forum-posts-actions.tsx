@@ -11,7 +11,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import IsLoading from "@/components/ui/is-loading";
-import { GetForumPostsResponse } from "@/config/types";
 
 import { trpc } from "@/server/trpc/client";
 import { IconEye, IconPencil, IconTrash } from "@tabler/icons-react";
@@ -20,7 +19,7 @@ import React from "react";
 import { toast } from "sonner";
 
 type ForumPostsActionsProps = {
-  post: GetForumPostsResponse;
+  post: any;
 };
 
 const ForumPostsActions: React.FC<ForumPostsActionsProps> = ({ post }) => {

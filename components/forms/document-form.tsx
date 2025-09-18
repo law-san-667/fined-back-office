@@ -1,6 +1,5 @@
 "use client";
 
-import { DocumentResponse } from "@/config/types";
 import {
   useDocumentThumbnailUpload,
   useDocumentUpload,
@@ -27,12 +26,12 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import IsLoading from "../ui/is-loading";
-import { Textarea } from "../ui/textarea";
 import { NumberInput } from "../ui/number-input";
+import { Textarea } from "../ui/textarea";
 
 type DocumentFormProps = {
   packId: string;
-  doc?: DocumentResponse;
+  doc?: any;
 };
 
 const DocumentForm: React.FC<DocumentFormProps> = ({ doc, packId }) => {

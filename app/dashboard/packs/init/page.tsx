@@ -36,7 +36,7 @@ const DashboardInitPackPage: React.FC<DashboardInitPackPageProps> = ({}) => {
   const router = useRouter();
 
   const { data: tags, isLoading: tagsLoading } =
-    trpc.packTags.getTags.useQuery();
+    trpc.packTags.getTags.useQuery() as any;
 
   const form = useForm<z.infer<typeof initPackSchema>>({
     resolver: zodResolver(initPackSchema),
@@ -196,10 +196,10 @@ const DashboardInitPackPage: React.FC<DashboardInitPackPageProps> = ({}) => {
                   <FormLabel>Tags</FormLabel>
                   <FormControl>
                     <MultiSelect
-                      options={tags.map((tag) => ({
+                      options={tags?.map((tag: any) => ({
                         label: tag.name,
                         value: tag.slug,
-                      }))}
+                      })) || []}
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                       animation={0}

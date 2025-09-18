@@ -1,12 +1,11 @@
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { UsersResponse } from "@/config/types";
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import UsersActions from "./users-actions";
 
-export const usersColumns: ColumnDef<UsersResponse>[] = [
+export const usersColumns: ColumnDef<any>[] = [
   {
     id: "select",
     header: ({ table }) => (

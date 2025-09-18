@@ -1,6 +1,5 @@
 "use client";
 
-import { DocumentResponse, VideoResponse } from "@/config/types";
 import { useVideoThumbnailUpload, useVideoUpload } from "@/hooks/use-uploads";
 import { videoSchema } from "@/lib/validators";
 import { trpc } from "@/server/trpc/client";
@@ -24,12 +23,12 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import IsLoading from "../ui/is-loading";
-import { Textarea } from "../ui/textarea";
 import { NumberInput } from "../ui/number-input";
+import { Textarea } from "../ui/textarea";
 
 type VideoFormProps = {
   packId: string;
-  video?: VideoResponse;
+  video?: any;
 };
 
 const VideoForm: React.FC<VideoFormProps> = ({ video, packId }) => {

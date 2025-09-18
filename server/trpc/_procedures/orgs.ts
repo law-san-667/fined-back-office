@@ -8,7 +8,7 @@ import { createTRPCRouter, privateProcedure } from "../init";
 
 export const orgsRouter = createTRPCRouter({
   getOrgs: privateProcedure.query(async ({ ctx }) => {
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from("organizations")
       .select("*")
       .order("created_at", { ascending: false });
@@ -60,7 +60,7 @@ export const orgsRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { name, description, logo, website, social_links } = input;
 
-      const { data: foundOrg, error: orgError } = await supabase
+      const { data: foundOrg, error: orgError } = await (supabase as any)
         .from("organizations")
         .select("id")
         .match({ name });
@@ -82,7 +82,7 @@ export const orgsRouter = createTRPCRouter({
         });
       }
 
-      const { error: createError } = await supabase
+      const { error: createError } = await (supabase as any)
         .from("organizations")
         .insert(input);
 
@@ -111,7 +111,7 @@ export const orgsRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { id, data } = input;
 
-      const { data: foundOrg, error: orgError } = await supabase
+      const { data: foundOrg, error: orgError } = await (supabase as any)
         .from("organizations")
         .select("id")
         .match({ id });
@@ -133,7 +133,7 @@ export const orgsRouter = createTRPCRouter({
         });
       }
 
-      const { error: updateError } = await supabase
+      const { error: updateError } = await (supabase as any)
         .from("organizations")
         .update(data)
         .match({ id });
@@ -159,7 +159,7 @@ export const orgsRouter = createTRPCRouter({
       const { ids } = input;
 
       for (const id of ids) {
-        const { error } = await supabase
+        const { error } = await (supabase as any)
           .from("organizations")
           .delete()
           .match({ id });
@@ -181,7 +181,7 @@ export const orgsRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { id } = input;
 
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from("organizations")
         .select("*")
         .match({ id });
@@ -203,7 +203,7 @@ export const orgsRouter = createTRPCRouter({
         });
       }
 
-      const { error: deleteError } = await supabase
+      const { error: deleteError } = await (supabase as any)
         .from("organizations")
         .delete()
         .match({ id });

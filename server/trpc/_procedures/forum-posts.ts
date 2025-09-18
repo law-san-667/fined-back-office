@@ -7,7 +7,7 @@ import { createTRPCRouter, privateProcedure } from "../init";
 
 export const forumPostsRouter = createTRPCRouter({
   getPosts: privateProcedure.query(async ({ ctx }) => {
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from("forum_posts")
       .select("*, customer_accounts(*)");
 
@@ -39,7 +39,7 @@ export const forumPostsRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const { id } = input;
 
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from("post_answers")
         .select("*, users(*)")
         .eq("question_id", input.id);
@@ -61,7 +61,7 @@ export const forumPostsRouter = createTRPCRouter({
         });
       }
 
-      const { data: post, error: postError } = await supabase
+      const { data: post, error: postError } = await (supabase as any)
         .from("forum_posts")
         .select("*, users(*)")
         .match({ id })
@@ -88,7 +88,7 @@ export const forumPostsRouter = createTRPCRouter({
 
       if (post.tags && post.tags.length > 0) {
         for (const tag of post.tags) {
-          const { data: tagExists, error: tagExistsError } = await supabase
+          const { data: tagExists, error: tagExistsError } = await (supabase as any)
             .from("post_tags")
             .select("*")
             .eq("slug", tag);
@@ -123,7 +123,7 @@ export const forumPostsRouter = createTRPCRouter({
   createPost: privateProcedure
     .input(forumPostSchema)
     .mutation(async ({ ctx, input }) => {
-      const { data: foundPost, error: postError } = await supabase
+      const { data: foundPost, error: postError } = await (supabase as any)
         .from("forum_posts")
         .select("*")
         .match({
@@ -147,7 +147,7 @@ export const forumPostsRouter = createTRPCRouter({
         });
       }
 
-      const { data: created, error: createError } = await supabase
+      const { data: created, error: createError } = await (supabase as any)
         .from("forum_posts")
         .insert({
           ...input,
@@ -183,7 +183,7 @@ export const forumPostsRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { id, values } = input;
 
-      const { data: foundPost, error: postError } = await supabase
+      const { data: foundPost, error: postError } = await (supabase as any)
         .from("forum_posts")
         .select("*")
         .match({ id });
@@ -205,7 +205,7 @@ export const forumPostsRouter = createTRPCRouter({
         });
       }
 
-      const { data: exists, error: existsError } = await supabase
+      const { data: exists, error: existsError } = await (supabase as any)
         .from("forum_posts")
         .select("*")
         .eq("title", values.title)
@@ -228,7 +228,7 @@ export const forumPostsRouter = createTRPCRouter({
         });
       }
 
-      const { data: updated, error: updateError } = await supabase
+      const { data: updated, error: updateError } = await (supabase as any)
         .from("forum_posts")
         .update(values)
         .match({ id })
@@ -259,7 +259,7 @@ export const forumPostsRouter = createTRPCRouter({
       const { ids } = input;
 
       for (const id of ids) {
-        const { error } = await supabase
+        const { error } = await (supabase as any)
           .from("forum_posts")
           .delete()
           .match({ id });
@@ -281,7 +281,7 @@ export const forumPostsRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { id } = input;
 
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from("forum_posts")
         .delete()
         .match({ id });
@@ -302,7 +302,7 @@ export const forumPostsRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { id } = input;
 
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from("post_answers")
         .delete()
         .match({ id });

@@ -8,7 +8,7 @@ export const usersRouter = createTRPCRouter({
   getUsers: privateProcedure.query(async ({ ctx }) => {
     const userOrgId = ctx.data?.adminAccount.org_id;
 
-    let query = supabase
+    let query = await (supabase as any)
       .from("users")
       .select(`
         *,
@@ -43,9 +43,9 @@ export const usersRouter = createTRPCRouter({
     // Additional filtering for users with org (filter by org in customer_accounts)
     let filteredData = data;
     if (userOrgId) {
-      filteredData = data.filter(user => 
-        user.customer_accounts && 
-        user.customer_accounts.orgs && 
+      filteredData = data.filter((user: any) =>
+        user.customer_accounts &&
+        user.customer_accounts.orgs &&
         user.customer_accounts.orgs.includes(userOrgId)
       );
     }
@@ -60,7 +60,7 @@ export const usersRouter = createTRPCRouter({
       })
     )
     .query(async ({ input, ctx }) => {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from("users")
         .select(`
           *,
@@ -95,7 +95,7 @@ export const usersRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from("users")
         .delete()
         .eq("id", input.id);
@@ -118,7 +118,7 @@ export const usersRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from("users")
         .delete()
         .in("id", input.ids);
@@ -142,7 +142,7 @@ export const usersRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from("customer_accounts")
         .update({ is_premium: input.isPremium })
         .eq("user_id", input.userId);

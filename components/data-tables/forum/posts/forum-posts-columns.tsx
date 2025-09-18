@@ -1,14 +1,9 @@
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  GetForumChannelsResponse,
-  GetForumPostsResponse,
-} from "@/config/types";
 import { ColumnDef } from "@tanstack/react-table";
 import { formatDate } from "date-fns";
-import ForumChannelsActions from "./forum-posts-actions";
 import ForumPostsActions from "./forum-posts-actions";
 
-export const forumPostsColumns: ColumnDef<GetForumPostsResponse>[] = [
+export const forumPostsColumns: ColumnDef<any>[] = [
   {
     id: "select",
     header: ({ table }) => (

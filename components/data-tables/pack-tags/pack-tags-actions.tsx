@@ -12,14 +12,13 @@ import {
 } from "@/components/ui/dialog";
 import IsLoading from "@/components/ui/is-loading";
 
-import { Database } from "@/server/supabase-types";
 import { trpc } from "@/server/trpc/client";
 import { IconPencil, IconTrash } from "@tabler/icons-react";
 import React from "react";
 import { toast } from "sonner";
 
 type PackTagsActionsProps = {
-  tag: Database["public"]["Tables"]["pack_tags"]["Row"];
+  tag: any;
 };
 
 const PackTagsActions: React.FC<PackTagsActionsProps> = ({ tag }) => {

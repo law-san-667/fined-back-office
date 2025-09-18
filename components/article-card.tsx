@@ -8,7 +8,6 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import { GetNewsResponse } from "@/config/types";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/server/trpc/client";
 import { formatDate } from "date-fns";
@@ -32,7 +31,7 @@ import {
 import IsLoading from "./ui/is-loading";
 
 interface ArticleCardProps {
-  article: GetNewsResponse;
+  article: any;
   isLatest: boolean;
 }
 

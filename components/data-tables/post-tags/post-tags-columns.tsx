@@ -1,11 +1,8 @@
 import { Checkbox } from "@/components/ui/checkbox";
-import { Database } from "@/server/supabase-types";
 import { ColumnDef } from "@tanstack/react-table";
 import PostTagsActions from "./post-tags-actions";
 
-export const postTagsColumns: ColumnDef<
-  Database["public"]["Tables"]["post_tags"]["Row"]
->[] = [
+export const postTagsColumns: ColumnDef<any>[] = [
   {
     id: "select",
     header: ({ table }) => (

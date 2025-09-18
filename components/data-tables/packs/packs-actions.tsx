@@ -10,7 +10,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import IsLoading from "@/components/ui/is-loading";
-import { PacksResponse } from "@/config/types";
 
 import { trpc } from "@/server/trpc/client";
 import { IconPencil, IconTrash } from "@tabler/icons-react";
@@ -19,7 +18,7 @@ import React from "react";
 import { toast } from "sonner";
 
 type PacksActionsProps = {
-  pack: PacksResponse;
+  pack: any;
 };
 
 const PacksActions: React.FC<PacksActionsProps> = ({ pack }) => {

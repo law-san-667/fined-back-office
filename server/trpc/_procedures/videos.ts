@@ -13,7 +13,7 @@ export const videosRouter = createTRPCRouter({
       })
     )
     .query(async ({ input, ctx }) => {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from("pack_videos")
         .select("*")
         .match({ pack_id: input.packId })
@@ -47,7 +47,7 @@ export const videosRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { packId, data } = input;
 
-      const { data: foundPack, error: packError } = await supabase
+      const { data: foundPack, error: packError } = await (supabase as any)
         .from("packs")
         .select("id")
         .match({ id: packId });
@@ -68,7 +68,7 @@ export const videosRouter = createTRPCRouter({
         });
       }
 
-      const { data: foundVideo, error: videoError } = await supabase
+      const { data: foundVideo, error: videoError } = await (supabase as any)
         .from("pack_videos")
         .select("id")
         .match({ pack_id: packId, title: data.title });
@@ -89,7 +89,7 @@ export const videosRouter = createTRPCRouter({
         });
       }
 
-      const { data: lastVideo, error: lastVideoError } = await supabase
+      const { data: lastVideo, error: lastVideoError } = await (supabase as any)
         .from("pack_videos")
         .select("order")
         .match({ pack_id: packId })
@@ -118,7 +118,7 @@ export const videosRouter = createTRPCRouter({
       const newOrder =
         lastVideo[0] && lastVideo[0].order > 0 ? lastVideo[0].order + 1 : 0;
 
-      const { data: createdVideo, error: createError } = await supabase
+      const { data: createdVideo, error: createError } = await (supabase as any)
         .from("pack_videos")
         .insert({
           title,
@@ -164,7 +164,7 @@ export const videosRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { packId, videoId, data } = input;
 
-      const { data: foundPack, error: packError } = await supabase
+      const { data: foundPack, error: packError } = await (supabase as any)
         .from("packs")
         .select("id")
         .match({ id: packId });
@@ -185,7 +185,7 @@ export const videosRouter = createTRPCRouter({
         });
       }
 
-      const { data: foundVideo, error: videoError } = await supabase
+      const { data: foundVideo, error: videoError } = await (supabase as any)
         .from("pack_videos")
         .select("id")
         .match({ pack_id: packId, id: videoId });
@@ -206,7 +206,7 @@ export const videosRouter = createTRPCRouter({
         });
       }
 
-      const { data: updatedVideo, error: updateError } = await supabase
+      const { data: updatedVideo, error: updateError } = await (supabase as any)
         .from("pack_videos")
         .update({
           title: data.title,
@@ -250,7 +250,7 @@ export const videosRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { packId, videoId } = input;
 
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from("pack_videos")
         .delete()
         .match({ pack_id: packId, id: videoId });

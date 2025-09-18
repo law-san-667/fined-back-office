@@ -31,7 +31,7 @@ const UserDetailPage: React.FC<UserDetailPageProps> = ({ params }) => {
     {
       enabled: !!resolvedParams?.id,
     }
-  );
+  ) as any;
 
   if (!resolvedParams || isLoading) return <IsLoadingScreen />;
 

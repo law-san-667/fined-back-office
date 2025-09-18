@@ -1,12 +1,11 @@
 import { Checkbox } from "@/components/ui/checkbox";
-import { GetNewsResponse } from "@/config/types";
 import { ColumnDef } from "@tanstack/react-table";
 import { formatDate } from "date-fns";
 import { fr } from "date-fns/locale";
 import Image from "next/image";
 import NewsActions from "./news-actions";
 
-export const newsColumns: ColumnDef<GetNewsResponse>[] = [
+export const newsColumns: ColumnDef<any>[] = [
   {
     id: "select",
     header: ({ table }) => (

@@ -21,7 +21,6 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import IsLoading from "@/components/ui/is-loading";
-import { UsersResponse } from "@/config/types";
 import { trpc } from "@/server/trpc/client";
 import { IconDotsVertical, IconStar, IconTrash, IconUser } from "@tabler/icons-react";
 import Link from "next/link";
@@ -29,7 +28,7 @@ import React from "react";
 import { toast } from "sonner";
 
 type UsersActionsProps = {
-  user: UsersResponse;
+  user: any;
 };
 
 const UsersActions: React.FC<UsersActionsProps> = ({ user }) => {

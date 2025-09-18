@@ -2,7 +2,6 @@
 
 import { useSupabaseUpload } from "@/hooks/use-supabase-upload";
 import { newsSchema } from "@/lib/validators";
-import { Database } from "@/server/supabase-types";
 import { trpc } from "@/server/trpc/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { isEqual } from "lodash";
@@ -36,14 +35,14 @@ import {
 
 type NewsFormProps = {
   id?: string;
-  news?: Database["public"]["Tables"]["news"]["Row"];
+  news?: any;
 };
 
 const NewsForm: React.FC<NewsFormProps> = ({ id, news }) => {
   const router = useRouter();
 
-  const { data: newsCategories, isLoading: isLoadingCategories } =
-    trpc.newsTags.getTags.useQuery();
+    const { data: newsCategories, isLoading: newsCategoriesLoading } =
+    trpc.newsTags.getTags.useQuery() as any;
 
   const form = useForm<z.infer<typeof newsSchema>>({
     resolver: zodResolver(newsSchema),
@@ -151,7 +150,7 @@ const NewsForm: React.FC<NewsFormProps> = ({ id, news }) => {
                   </FormControl>
                   <SelectContent>
                     {newsCategories &&
-                      newsCategories?.map((type) => (
+                      newsCategories?.map((type: any) => (
                         <SelectItem key={type.slug} value={type.slug}>
                           {type.name}
                         </SelectItem>

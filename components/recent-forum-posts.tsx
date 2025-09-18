@@ -16,7 +16,7 @@ import { fr } from "date-fns/locale";
 import Link from "next/link";
 
 export function RecentForumPosts() {
-  const { data: posts, isLoading } = trpc.dashboard.getRecentForumPosts.useQuery();
+  const { data: posts, isLoading } = trpc.dashboard.getRecentForumPosts.useQuery() as any;
 
   if (isLoading) {
     return (
@@ -69,7 +69,7 @@ export function RecentForumPosts() {
       <CardContent>
         {posts && posts.length > 0 ? (
           <div className="space-y-4">
-            {posts.map((post) => (
+            {posts.map((post: any) => (
               <Link 
                 key={post.id} 
                 href={`/dashboard/forum/posts/${post.id}`}
@@ -83,7 +83,7 @@ export function RecentForumPosts() {
                     </h4>
                     <div className="flex items-center space-x-2 text-xs text-muted-foreground">
                       <span>
-                        Par {post.users?.email || "Utilisateur inconnu"}
+                        Par {post.customer_accounts?.name || "Utilisateur inconnu"}
                       </span>
                       <span>•</span>
                       <span>

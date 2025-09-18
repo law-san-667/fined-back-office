@@ -21,20 +21,18 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { GetSingleForumChannelResponse } from "@/config/types";
 import { cn } from "@/lib/utils";
-import { Database } from "@/server/supabase-types";
 import { trpc } from "@/server/trpc/client";
 import { fr } from "date-fns/locale";
 import { toast } from "sonner";
 import IsLoading from "./ui/is-loading";
 
 type ChannelMessagesTimelineProps = {
-  messages: GetSingleForumChannelResponse[];
-  channel?: Database["public"]["Tables"]["forum_channels"]["Row"];
+  messages: any[];
+  channel?: any;
 };
 
-type Message = Database["public"]["Tables"]["channel_messages"]["Row"];
+type Message = any;
 
 export function ChannelMessagesTimeline({
   channel,

@@ -13,14 +13,13 @@ import {
 } from "@/components/ui/dialog";
 import IsLoading from "@/components/ui/is-loading";
 
-import { Database } from "@/server/supabase-types";
 import { trpc } from "@/server/trpc/client";
 import { IconPencil, IconTrash } from "@tabler/icons-react";
 import React from "react";
 import { toast } from "sonner";
 
 type NewsTagsActionsProps = {
-  tag: Database["public"]["Tables"]["news_tags"]["Row"];
+  tag: any;
 };
 
 const NewsTagsActions: React.FC<NewsTagsActionsProps> = ({ tag }) => {

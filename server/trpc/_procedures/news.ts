@@ -7,7 +7,7 @@ import { createTRPCRouter, privateProcedure } from "../init";
 
 export const newsRouter = createTRPCRouter({
   getNews: privateProcedure.query(async ({ ctx }) => {
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from("news")
       .select("*, category(*)")
       .order("created_at", { ascending: false });
@@ -39,7 +39,7 @@ export const newsRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const { id } = input;
 
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from("news")
         .select("*")
         .match({ id })
@@ -67,7 +67,7 @@ export const newsRouter = createTRPCRouter({
   createNews: privateProcedure
     .input(newsSchema)
     .mutation(async ({ ctx, input }) => {
-      const { data: foundNews, error: foundNewsError } = await supabase
+      const { data: foundNews, error: foundNewsError } = await (supabase as any)
         .from("news")
         .select("*")
         .match({
@@ -88,7 +88,7 @@ export const newsRouter = createTRPCRouter({
         });
       }
 
-      const { data: created, error: createError } = await supabase
+      const { data: created, error: createError } = await (supabase as any)
         .from("news")
         .insert(input)
         .select();
@@ -119,7 +119,7 @@ export const newsRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { id, data } = input;
 
-      const { data: foundNews, error: foundNewsError } = await supabase
+      const { data: foundNews, error: foundNewsError } = await (supabase as any)
         .from("news")
         .select("*")
         .match({ id });
@@ -138,7 +138,7 @@ export const newsRouter = createTRPCRouter({
         });
       }
 
-      const { data: newsExists, error: newsExistsError } = await supabase
+      const { data: newsExists, error: newsExistsError } = await (supabase as any)
         .from("news")
         .select("*")
         .eq("title", data.title)
@@ -159,7 +159,7 @@ export const newsRouter = createTRPCRouter({
         });
       }
 
-      const { data: updated, error: updateError } = await supabase
+      const { data: updated, error: updateError } = await (supabase as any)
         .from("news")
         .update(data)
         .match({ id })
@@ -188,7 +188,7 @@ export const newsRouter = createTRPCRouter({
       const { ids } = input;
 
       for (const id of ids) {
-        const { error } = await supabase.from("news").delete().match({ id });
+        const { error } = await (supabase as any).from("news").delete().match({ id });
 
         if (error) {
           if (shouldLog) console.error(error);
@@ -207,7 +207,7 @@ export const newsRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { id } = input;
 
-      const { error } = await supabase.from("news").delete().match({ id });
+      const { error } = await (supabase as any).from("news").delete().match({ id });
 
       if (error) {
         if (shouldLog) console.error(error);

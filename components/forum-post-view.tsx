@@ -1,9 +1,5 @@
 "use client";
 
-import {
-  GetSingleForumPostAnswersResponse,
-  GetSingleForumPostResponse,
-} from "@/config/types";
 import { trpc } from "@/server/trpc/client";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -28,8 +24,8 @@ import {
 import IsLoading from "./ui/is-loading";
 
 type ForumPostViewProps = {
-  answers: GetSingleForumPostAnswersResponse[];
-  post: GetSingleForumPostResponse;
+  answers: any[];
+  post: any;
 };
 
 const ForumPostView: React.FC<ForumPostViewProps> = ({ post, answers }) => {
@@ -135,7 +131,7 @@ const ForumPostView: React.FC<ForumPostViewProps> = ({ post, answers }) => {
               <div className="flex items-center gap-2">
                 <Tag className="h-4 w-4 text-muted-foreground" />
                 <div className="flex flex-wrap gap-2">
-                  {post.tags.map((tag) => (
+                  {post.tags.map((tag: any) => (
                     <Badge key={tag} variant="secondary">
                       {tag}
                     </Badge>

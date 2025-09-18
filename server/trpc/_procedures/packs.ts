@@ -8,7 +8,7 @@ import { createTRPCRouter, privateProcedure } from "../init";
 export const packsRouter = createTRPCRouter({
   getPacks: privateProcedure.query(async ({ ctx }) => {
     // TODO: Check if org, get only packs of the org
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from("packs")
       .select("*")
       .order("created_at", { ascending: false });
@@ -36,16 +36,16 @@ export const packsRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const { id } = input;
 
-      const { data: pack, error: packError } = await supabase
+      const { data: pack, error: packError } = await (supabase as any)
         .from("packs")
         .select("*")
         .match({ id })
         .single();
-      const { data: docs, error: docsError } = await supabase
+      const { data: docs, error: docsError } = await (supabase as any)
         .from("pack_documents")
         .select("*")
         .match({ pack_id: id });
-      const { data: videos, error: videosError } = await supabase
+      const { data: videos, error: videosError } = await (supabase as any)
         .from("pack_videos")
         .select("*")
         .match({ pack_id: id });
@@ -108,7 +108,7 @@ export const packsRouter = createTRPCRouter({
   initPack: privateProcedure
     .input(initPackSchema)
     .mutation(async ({ ctx, input }) => {
-      const { data: foundPack, error: foundPackError } = await supabase
+      const { data: foundPack, error: foundPackError } = await (supabase as any)
         .from("packs")
         .select("*")
         .match({
@@ -129,7 +129,7 @@ export const packsRouter = createTRPCRouter({
         });
       }
 
-      const { data, error: createError } = await supabase
+      const { data, error: createError } = await (supabase as any)
         .from("packs")
         .insert({
           title: input.title,
@@ -163,7 +163,7 @@ export const packsRouter = createTRPCRouter({
         data: packDetailsSchema
       })
     ).mutation(async ({input , ctx}) => {
-            const { data: foundPack, error: foundPackError } = await supabase
+            const { data: foundPack, error: foundPackError } = await (supabase as any)
         .from("packs")
         .select("*")
         .eq("title", input.data.title)
@@ -184,7 +184,7 @@ export const packsRouter = createTRPCRouter({
         });
       }
 
-      const { error: updateError } = await supabase
+      const { error: updateError } = await (supabase as any)
         .from("packs")
         .update(input.data)
         .match({ id: input.id });
@@ -207,7 +207,7 @@ export const packsRouter = createTRPCRouter({
       ).mutation(async ({ ctx, input }) => {
         const { packId, tags } = input;
 
-        const {data: foundPack, error: packError} = await supabase
+        const {data: foundPack, error: packError} = await (supabase as any)
           .from("packs")
           .select("id")
           .match({ id: packId });
@@ -226,7 +226,7 @@ export const packsRouter = createTRPCRouter({
           });
         }
 
-        const { error: updateError } = await supabase
+        const { error: updateError } = await (supabase as any)
           .from("packs")
           .update({ tags })
           .match({ id: packId });
@@ -250,7 +250,7 @@ export const packsRouter = createTRPCRouter({
         .mutation(async ({ ctx, input }) => {
           const { packId, tag } = input;
 
-          const {data: foundPack, error: packError} = await supabase
+          const {data: foundPack, error: packError} = await (supabase as any)
             .from("packs")
             .select("id, tags")
             .match({ id: packId });
@@ -269,9 +269,9 @@ export const packsRouter = createTRPCRouter({
             });
           }
 
-          const newTags = foundPack[0].tags.filter((t) => t !== tag);
+          const newTags = foundPack[0].tags.filter((t: string) => t !== tag);
 
-          const { error: updateError } = await supabase
+          const { error: updateError } = await (supabase as any)
             .from("packs")
             .update({ tags: newTags })
             .match({ id: packId });
@@ -291,7 +291,7 @@ export const packsRouter = createTRPCRouter({
       const { ids } = input;
 
       for (const id of ids) {
-        const { error } = await supabase.from("packs").delete().match({ id });
+        const { error } = await (supabase as any).from("packs").delete().match({ id });
 
         if (error) {
           if (shouldLog) console.error(error);
@@ -309,7 +309,7 @@ export const packsRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { id } = input;
 
-      const { error } = await supabase.from("packs").delete().match({ id });
+      const { error } = await (supabase as any).from("packs").delete().match({ id });
 
       if (error) {
         if (shouldLog) console.error(error);

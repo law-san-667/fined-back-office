@@ -37,8 +37,8 @@ const ForumPostForm: React.FC<ForumPostFormProps> = ({
   initValues,
   setOpenUpdate,
 }) => {
-  const { data: questionTags, isLoading: isLoadingTags } =
-    trpc.postTags.getTags.useQuery();
+    const { data: questionTags, isLoading: questionTagsLoading } =
+    trpc.postTags.getTags.useQuery() as any;
 
   const form = useForm<z.infer<typeof forumPostSchema>>({
     resolver: zodResolver(forumPostSchema),
@@ -154,7 +154,7 @@ const ForumPostForm: React.FC<ForumPostFormProps> = ({
                 <FormControl>
                   <MultiSelect
                     placeholder="Choisissez les tags qui correspondent à votre question"
-                    options={questionTags.map((tag) => ({
+                    options={questionTags.map((tag: any) => ({
                       label: tag.name,
                       value: tag.slug,
                     }))}

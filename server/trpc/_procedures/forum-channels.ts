@@ -7,7 +7,7 @@ import { createTRPCRouter, privateProcedure } from "../init";
 
 export const forumChannelsRouter = createTRPCRouter({
   getChannels: privateProcedure.query(async ({ ctx }) => {
-    const { data, error } = await supabase.from("forum_channels").select("*");
+    const { data, error } = await (supabase as any).from("forum_channels").select("*");
 
     if (error) {
       if (shouldLog) console.error(error);
@@ -30,7 +30,7 @@ export const forumChannelsRouter = createTRPCRouter({
   getChannel: privateProcedure
     .input(z.object({ id: z.string().uuid() }))
     .query(async ({ ctx, input }) => {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from("channel_messages")
         .select("*, users(*)")
         .eq("channel_id", input.id)
@@ -52,7 +52,7 @@ export const forumChannelsRouter = createTRPCRouter({
         });
       }
 
-      const { data: channel, error: channelError } = await supabase
+      const { data: channel, error: channelError } = await (supabase as any)
         .from("forum_channels")
         .select("*")
         .eq("id", input.id)
@@ -82,7 +82,7 @@ export const forumChannelsRouter = createTRPCRouter({
   deleteChannelMessage: privateProcedure
     .input(z.object({ id: z.string().uuid() }))
     .mutation(async ({ ctx, input }) => {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from("channel_messages")
         .delete()
         .match({ id: input.id });
@@ -100,7 +100,7 @@ export const forumChannelsRouter = createTRPCRouter({
   createChannel: privateProcedure
     .input(forumChannelSchema)
     .mutation(async ({ ctx, input }) => {
-      const { data: foundChannel, error: foundChannelError } = await supabase
+      const { data: foundChannel, error: foundChannelError } = await (supabase as any)
         .from("forum_channels")
         .select("id")
         .match({
@@ -121,7 +121,7 @@ export const forumChannelsRouter = createTRPCRouter({
         });
       }
 
-      const { data, error: createError } = await supabase
+      const { data, error: createError } = await (supabase as any)
         .from("forum_channels")
         .insert({
           name: input.name,
@@ -155,7 +155,7 @@ export const forumChannelsRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const { data: foundChannel, error: foundChannelError } = await supabase
+      const { data: foundChannel, error: foundChannelError } = await (supabase as any)
         .from("forum_channels")
         .select("id")
         .match({
@@ -176,7 +176,7 @@ export const forumChannelsRouter = createTRPCRouter({
         });
       }
 
-      const { data: channelExists, error: channelExistsError } = await supabase
+      const { data: channelExists, error: channelExistsError } = await (supabase as any)
         .from("forum_channels")
         .select("id")
         .eq("name", input.values.name)
@@ -196,7 +196,7 @@ export const forumChannelsRouter = createTRPCRouter({
         });
       }
 
-      const { data, error: updateError } = await supabase
+      const { data, error: updateError } = await (supabase as any)
         .from("forum_channels")
         .update({
           name: input.values.name,
@@ -228,7 +228,7 @@ export const forumChannelsRouter = createTRPCRouter({
       const { ids } = input;
 
       for (const id of ids) {
-        const { error } = await supabase
+        const { error } = await (supabase as any)
           .from("forum_channels")
           .delete()
           .match({ id });
@@ -249,7 +249,7 @@ export const forumChannelsRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { id } = input;
 
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from("forum_channels")
         .delete()
         .match({ id });

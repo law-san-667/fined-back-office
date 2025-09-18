@@ -1,6 +1,5 @@
 "use client";
 
-import { PackDetailsResponse } from "@/config/types";
 import { usePackThumbnailUpload } from "@/hooks/use-uploads";
 import { packDetailsSchema } from "@/lib/validators";
 import { trpc } from "@/server/trpc/client";
@@ -31,7 +30,7 @@ import { Switch } from "../ui/switch";
 import { Textarea } from "../ui/textarea";
 
 type PackDetailsFornProps = {
-  pack: PackDetailsResponse;
+  pack: any;
   mode: string;
   tags: { value: string; label: string }[];
   setMode: React.Dispatch<

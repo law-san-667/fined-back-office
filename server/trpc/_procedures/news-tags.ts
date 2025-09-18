@@ -6,7 +6,7 @@ import { createTRPCRouter, privateProcedure } from "../init";
 
 export const newsTagsRouter = createTRPCRouter({
   getTags: privateProcedure.query(async ({ ctx }) => {
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from("news_tags")
       .select("*")
       .order("created_at", { ascending: false });
@@ -39,7 +39,7 @@ export const newsTagsRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { name, slug } = input;
 
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from("news_tags")
         .select("*")
         .match({ slug });
@@ -60,7 +60,7 @@ export const newsTagsRouter = createTRPCRouter({
         });
       }
 
-      const { error: insertError } = await supabase.from("news_tags").insert({
+      const { error: insertError } = await (supabase as any).from("news_tags").insert({
         name,
         slug,
       });
@@ -86,7 +86,7 @@ export const newsTagsRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { name, slug, prev } = input;
 
-      const { data: foundTag, error: tagError } = await supabase
+      const { data: foundTag, error: tagError } = await (supabase as any)
         .from("news_tags")
         .select("*")
         .match({ slug });
@@ -107,7 +107,7 @@ export const newsTagsRouter = createTRPCRouter({
         });
       }
 
-      const { error: updateError } = await supabase
+      const { error: updateError } = await (supabase as any)
         .from("news_tags")
         .update({ name, slug })
         .match({ slug: prev });
@@ -128,7 +128,7 @@ export const newsTagsRouter = createTRPCRouter({
       const { slugs } = input;
 
       for (const slug of slugs) {
-        const { error } = await supabase
+        const { error } = await (supabase as any)
           .from("news_tags")
           .delete()
           .match({ slug });
@@ -149,7 +149,7 @@ export const newsTagsRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { slug } = input;
 
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from("news_tags")
         .select("*")
         .match({ slug });
@@ -170,7 +170,7 @@ export const newsTagsRouter = createTRPCRouter({
         });
       }
 
-      const { error: deleteError } = await supabase
+      const { error: deleteError } = await (supabase as any)
         .from("news_tags")
         .delete()
         .match({ slug });

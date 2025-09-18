@@ -13,7 +13,7 @@ export const dashboardRouter = createTRPCRouter({
       
       if (userOrgId) {
         // If user has an org, count customer_accounts with matching org
-        const { data: customerAccountsData, error: usersError } = await supabase
+        const { data: customerAccountsData, error: usersError } = await (supabase as any)
           .from("customer_accounts")
           .select("id, orgs");
 
@@ -21,13 +21,13 @@ export const dashboardRouter = createTRPCRouter({
           if (shouldLog) console.error("Error counting customer accounts:", usersError);
         } else if (customerAccountsData) {
           // Filter customer accounts that contain the user's org
-          usersCount = customerAccountsData.filter(account => 
+          usersCount = customerAccountsData.filter((account: any) => 
             account.orgs && account.orgs.includes(userOrgId)
           ).length;
         }
       } else {
         // If user has no org, count all active customer_accounts (those without orgs)
-        const { data: customerAccountsData, error: usersError } = await supabase
+        const { data: customerAccountsData, error: usersError } = await (supabase as any)
           .from("customer_accounts")
           .select("id, orgs");
 
@@ -35,14 +35,14 @@ export const dashboardRouter = createTRPCRouter({
           if (shouldLog) console.error("Error counting customer accounts:", usersError);
         } else if (customerAccountsData) {
           // Count customer accounts without orgs (null or empty array)
-          usersCount = customerAccountsData.filter(account => 
+          usersCount = customerAccountsData.filter((account: any) => 
             !account.orgs || account.orgs.length === 0
           ).length;
         }
       }
 
       // Get packs count
-      const { count: packsCount, error: packsError } = await supabase
+      const { count: packsCount, error: packsError } = await (supabase as any)
         .from("packs")
         .select("*", { count: "exact", head: true });
 
@@ -68,7 +68,7 @@ export const dashboardRouter = createTRPCRouter({
   }),
 
   getRecentForumPosts: privateProcedure.query(async ({ ctx }) => {
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from("forum_posts")
       .select(`
         *,

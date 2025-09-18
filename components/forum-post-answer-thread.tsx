@@ -15,16 +15,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { GetSingleForumPostAnswersResponse } from "@/config/types";
 import { trpc } from "@/server/trpc/client";
 import { fr } from "date-fns/locale";
 import { toast } from "sonner";
 
 interface ForumPostAnswerThreadProps {
-  answers: GetSingleForumPostAnswersResponse[];
+  answers: any[];
 }
 
-type Answer = GetSingleForumPostAnswersResponse;
+type Answer = any;
 
 export function ForumPostAnswerThread({ answers }: ForumPostAnswerThreadProps) {
   const [answerToDelete, setAnswerToDelete] = useState<Answer | null>(null);
@@ -232,11 +231,11 @@ export function ForumPostAnswerThread({ answers }: ForumPostAnswerThreadProps) {
           <div className="space-y-2">
             {answer.replies
               .sort(
-                (a, b) =>
+                (a: any, b: any) =>
                   new Date(a.created_at || "").getTime() -
                   new Date(b.created_at || "").getTime()
               )
-              .map((reply) =>
+              .map((reply: any) =>
                 renderAnswer(
                   {
                     ...reply,
@@ -272,7 +271,7 @@ export function ForumPostAnswerThread({ answers }: ForumPostAnswerThreadProps) {
     <div className="space-y-4">
       {threadedAnswers
         .sort(
-          (a, b) =>
+          (a: any, b: any) =>
             new Date(a.created_at || "").getTime() -
             new Date(b.created_at || "").getTime()
         )
