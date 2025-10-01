@@ -18,7 +18,8 @@ export const useDocumentUpload = () => {
     bucketName: "documents",
     allowedMimeTypes: ["application/pdf"],
     maxFiles: 1,
-    maxFileSize: 1024 * 1024 * 50,
+    //50GB
+    maxFileSize: 1024 * 1024 * 50 * 1024,
     upsert: true,
   });
 
@@ -43,7 +44,8 @@ export const useVideoUpload = () => {
     bucketName: "videos",
     allowedMimeTypes: ["video/*"],
     maxFiles: 1,
-    maxFileSize: 1024 * 1024 * 50,
+    //50GB
+    maxFileSize: 1024 * 1024 * 50 * 1024,
     upsert: true,
   });
 
