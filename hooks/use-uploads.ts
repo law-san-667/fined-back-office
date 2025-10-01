@@ -6,7 +6,8 @@ export const usePackThumbnailUpload = () => {
     path: "thumbnail",
     allowedMimeTypes: ["image/*"],
     maxFiles: 1,
-    maxFileSize: 1024 * 1024 * 16,
+    // 50MB
+    maxFileSize: 1024 * 1024 * 50,
     upsert: true,
   });
 
@@ -32,7 +33,7 @@ export const useDocumentThumbnailUpload = () => {
     path: "thumbnail",
     allowedMimeTypes: ["image/*"],
     maxFiles: 1,
-    maxFileSize: 1024 * 1024 * 16,
+    maxFileSize: 1024 * 1024 * 50,
     upsert: true,
   });
 
@@ -58,7 +59,7 @@ export const useVideoThumbnailUpload = () => {
     path: "thumbnail",
     allowedMimeTypes: ["image/*"],
     maxFiles: 1,
-    maxFileSize: 1024 * 1024 * 16,
+    maxFileSize: 1024 * 1024 * 50,
     upsert: true,
   });
 

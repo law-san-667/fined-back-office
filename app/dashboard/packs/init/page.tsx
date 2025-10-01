@@ -65,7 +65,7 @@ const DashboardInitPackPage: React.FC<DashboardInitPackPageProps> = ({}) => {
     path: "thumbnail",
     allowedMimeTypes: ["image/*"],
     maxFiles: 1,
-    maxFileSize: 1024 * 1024 * 16,
+    maxFileSize: 1024 * 1024 * 50,
     upsert: true,
   });
 
