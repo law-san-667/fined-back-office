@@ -14,6 +14,7 @@ export function AnimatedBellIcon({ className = "" }: AnimatedBellIconProps) {
   return (
     <div className="relative">
       <IconBell 
+        size={19}
         className={`${className} transition-all duration-300 ${
           isNotificationsPage 
             ? "animate-soft-pulse text-primary scale-110" 
