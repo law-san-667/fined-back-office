@@ -1,6 +1,7 @@
 import { shouldLog } from "@/config/global";
 import { newsSchema } from "@/lib/validators";
 import { supabase } from "@/server/supabase";
+import { sendAutoNotification } from "../utils/notification-helpers";
 import { TRPCError } from "@trpc/server";
 import z from "zod";
 import { createTRPCRouter, privateProcedure } from "../init";
@@ -105,6 +106,16 @@ export const newsRouter = createTRPCRouter({
           code: "INTERNAL_SERVER_ERROR",
           message: "L'article n'a pas pu être créé",
         });
+      }
+
+      // Envoyer une notification automatique
+      try {
+        await sendAutoNotification("news", input.title, input.content);
+      } catch (notificationError) {
+        // Log l'erreur mais ne pas faire échouer la création de la news
+        if (shouldLog) {
+          console.error("Erreur lors de l'envoi de la notification automatique:", notificationError);
+        }
       }
 
       return created[0];

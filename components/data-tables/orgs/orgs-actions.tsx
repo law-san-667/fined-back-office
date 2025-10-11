@@ -52,7 +52,7 @@ const OrgsActions: React.FC<OrgsActionsProps> = ({ org }) => {
             <IconPencil />
           </Button>
         </DialogTrigger>
-        <DialogContent>
+        <DialogContent className="max-w-3xl h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Modifier l&apos;organisation</DialogTitle>
             <DialogDescription>

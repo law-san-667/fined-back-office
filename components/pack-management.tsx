@@ -501,7 +501,7 @@ const PackManagement: React.FC<PackManagementProps> = ({ id }) => {
                           Ajouter un document
                         </Button>
                       </DialogTrigger>
-                      <DialogContent className="bg-white">
+                      <DialogContent className="bg-white max-w-3xl h-[80vh] overflow-y-auto">
                         <DialogHeader>
                           <DialogTitle>Nouveau document</DialogTitle>
                         </DialogHeader>
@@ -571,7 +571,7 @@ const PackManagement: React.FC<PackManagementProps> = ({ id }) => {
                           Ajouter une vidéo
                         </Button>
                       </DialogTrigger>
-                      <DialogContent>
+                      <DialogContent className="max-w-3xl h-[80vh] overflow-y-auto">
                         <DialogHeader>
                           <DialogTitle>Nouvelle vidéo</DialogTitle>
                         </DialogHeader>

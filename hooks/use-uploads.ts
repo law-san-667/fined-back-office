@@ -9,6 +9,7 @@ export const usePackThumbnailUpload = () => {
     // 50MB
     maxFileSize: 1024 * 1024 * 50,
     upsert: true,
+    preserveOriginalName: false, // Nettoyer les noms de fichiers
   });
 
   return props;
@@ -22,6 +23,7 @@ export const useDocumentUpload = () => {
     //50GB
     maxFileSize: 1024 * 1024 * 50 * 1024,
     upsert: true,
+    preserveOriginalName: false, // Nettoyer les noms de fichiers
   });
 
   return props;
@@ -35,6 +37,7 @@ export const useDocumentThumbnailUpload = () => {
     maxFiles: 1,
     maxFileSize: 1024 * 1024 * 50,
     upsert: true,
+    preserveOriginalName: false, // Nettoyer les noms de fichiers
   });
 
   return props;
@@ -48,6 +51,7 @@ export const useVideoUpload = () => {
     //50GB
     maxFileSize: 1024 * 1024 * 50 * 1024,
     upsert: true,
+    preserveOriginalName: false, // Nettoyer les noms de fichiers
   });
 
   return props;
@@ -61,6 +65,7 @@ export const useVideoThumbnailUpload = () => {
     maxFiles: 1,
     maxFileSize: 1024 * 1024 * 50,
     upsert: true,
+    preserveOriginalName: false, // Nettoyer les noms de fichiers
   });
 
   return props;
