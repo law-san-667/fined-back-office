@@ -1,4 +1,5 @@
 import { supabaseClient } from "@/server/client";
+import { cleanFileName } from "@/lib/file-utils";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   type FileError,
@@ -50,6 +51,12 @@ type UseSupabaseUploadOptions = {
    * When set to false, an error is thrown if the object already exists. Defaults to `false`
    */
   upsert?: boolean;
+  /**
+   * When set to true, the original filename is preserved (spaces and special characters may cause issues).
+   * When set to false, the filename is cleaned (spaces replaced with underscores, special chars removed).
+   * Defaults to `false` (clean filenames)
+   */
+  preserveOriginalName?: boolean;
 };
 
 type UseSupabaseUploadReturn = ReturnType<typeof useSupabaseUpload>;
@@ -63,6 +70,7 @@ const useSupabaseUpload = (options: UseSupabaseUploadOptions) => {
     maxFiles = 1,
     cacheControl = 3600,
     upsert = false,
+    preserveOriginalName = false,
   } = options;
 
   const [files, setFiles] = useState<FileWithPreview[]>([]);
@@ -135,9 +143,14 @@ const useSupabaseUpload = (options: UseSupabaseUploadOptions) => {
 
     const responses = await Promise.all(
       filesToUpload.map(async (file) => {
+        // Nettoyer le nom du fichier pour éviter les problèmes avec les espaces et caractères spéciaux
+        // sauf si l'utilisateur souhaite préserver le nom original
+        const fileName = preserveOriginalName ? file.name : cleanFileName(file.name);
+        const uploadPath = !!path ? `${path}/${fileName}` : fileName;
+        
         const { data, error } = await supabaseClient.storage
           .from(bucketName)
-          .upload(!!path ? `${path}/${file.name}` : file.name, file, {
+          .upload(uploadPath, file, {
             cacheControl: cacheControl.toString(),
             upsert,
           });

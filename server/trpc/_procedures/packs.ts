@@ -1,6 +1,7 @@
 import { shouldLog } from "@/config/global";
 import { initPackSchema, packDetailsSchema } from "@/lib/validators";
 import { supabase } from "@/server/supabase";
+import { sendAutoNotification } from "../utils/notification-helpers";
 import { TRPCError } from "@trpc/server";
 import z from "zod";
 import { createTRPCRouter, privateProcedure } from "../init";
@@ -153,6 +154,16 @@ export const packsRouter = createTRPCRouter({
           code: "INTERNAL_SERVER_ERROR",
           message: "Le pack n'a pas pu être créé",
         });
+      }
+
+      // Envoyer une notification automatique
+      try {
+        await sendAutoNotification("pack", input.title, input.description);
+      } catch (notificationError) {
+        // Log l'erreur mais ne pas faire échouer la création du pack
+        if (shouldLog) {
+          console.error("Erreur lors de l'envoi de la notification automatique:", notificationError);
+        }
       }
 
       return data[0];

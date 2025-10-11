@@ -67,6 +67,7 @@ const DashboardInitPackPage: React.FC<DashboardInitPackPageProps> = ({}) => {
     maxFiles: 1,
     maxFileSize: 1024 * 1024 * 50,
     upsert: true,
+    preserveOriginalName: false, // Nettoyer les noms de fichiers
   });
 
   React.useEffect(() => {

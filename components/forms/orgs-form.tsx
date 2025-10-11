@@ -80,6 +80,7 @@ const OrgsForm: React.FC<OrgsFormProps> = ({
     maxFiles: 1,
     maxFileSize: 1024 * 1024 * 16,
     upsert: true,
+    preserveOriginalName: false, // Nettoyer les noms de fichiers
   });
 
   React.useEffect(() => {

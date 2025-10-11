@@ -1,4 +1,5 @@
 import {
+  IconBell,
   IconDatabase,
   IconFileAi,
   IconFolder,
@@ -49,6 +50,11 @@ export const ADMIN_MENU = {
       title: "News",
       url: "/dashboard/news",
       icon: IconNews,
+    },
+    {
+      title: "Notifications",
+      url: "/dashboard/notifications",
+      icon: IconBell,
     },
   ],
   documents: [

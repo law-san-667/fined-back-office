@@ -7,6 +7,18 @@ if (!process.env.BACKEND_URL) {
 
 const url = process.env.BACKEND_URL;
 
+function isBrowser() {
+  return typeof window !== "undefined" && typeof document !== "undefined";
+}
+
+function buildRefreshUrl() {
+  const explicit = process.env.AUTH_REFRESH_URL;
+  if (explicit) return explicit;
+  if (!url) return "";
+  // Fallback: BACKEND_URL + "/auth/refresh"
+  return url.replace(/\/?$/, "") + "/auth/refresh";
+}
+
 const api = Axios.create({
   baseURL: url,
   headers: {
@@ -16,10 +28,15 @@ const api = Axios.create({
 
 const RefreshApiToken = async () => {
   try {
+    if (!isBrowser()) return null;
     const token = Cookies.get("refreshToken");
-    const result = await Axios.get(url + "refreshToken", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const refreshUrl = buildRefreshUrl();
+    if (!refreshUrl) return null;
+    const result = await Axios.post(
+      refreshUrl,
+      {},
+      token ? { headers: { Authorization: `Bearer ${token}` } } : undefined,
+    );
     Cookies.set("accessToken", result.data.accessToken);
     Cookies.set("refreshToken", result.data.refreshToken);
 
@@ -31,9 +48,11 @@ const RefreshApiToken = async () => {
 
 api.interceptors.request.use(
   async (config) => {
-    const token = Cookies.get("accessToken");
-    if (token) {
-      config.headers["Authorization"] = ` Bearer ${token}`;
+    if (isBrowser()) {
+      const token = Cookies.get("accessToken");
+      if (token) {
+        config.headers["Authorization"] = `Bearer ${token}`;
+      }
     }
     return config;
   },
