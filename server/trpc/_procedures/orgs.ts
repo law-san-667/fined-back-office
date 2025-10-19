@@ -2,6 +2,7 @@ import { shouldLog } from "@/config/global";
 import { SocialLinks } from "@/config/types";
 import { orgSchema } from "@/lib/validators";
 import { supabase } from "@/server/supabase";
+import api from "@/server/api";
 import { TRPCError } from "@trpc/server";
 import z from "zod";
 import { createTRPCRouter, privateProcedure } from "../init";
@@ -218,5 +219,38 @@ export const orgsRouter = createTRPCRouter({
       }
 
       return true;
+    }),
+  inviteAdmin: privateProcedure
+    .input(
+      z.object({
+        email: z.string().email(),
+        name: z.string().min(1),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const userOrgId = ctx.data?.adminAccount?.org_id ?? null;
+
+      if (!userOrgId) {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Organisation requise" });
+      }
+
+      try {
+        const res = await api.post("/auth/admin/invite", {
+          email: input.email,
+          name: input.name,
+          orgId: userOrgId,
+        });
+
+        if (res.data?.error) {
+          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: res.data.error });
+        }
+
+        return true;
+      } catch (e: any) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: e?.response?.data?.error || e.message || "Invitation échouée",
+        });
+      }
     }),
 });
