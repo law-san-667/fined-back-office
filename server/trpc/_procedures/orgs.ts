@@ -3,6 +3,7 @@ import { SocialLinks } from "@/config/types";
 import { orgSchema } from "@/lib/validators";
 import { supabase } from "@/server/supabase";
 import api from "@/server/api";
+import { cookies } from "next/headers";
 import { TRPCError } from "@trpc/server";
 import z from "zod";
 import { createTRPCRouter, privateProcedure } from "../init";
@@ -220,26 +221,34 @@ export const orgsRouter = createTRPCRouter({
 
       return true;
     }),
-  inviteAdmin: privateProcedure
+  // For system admins (org_id null): invite an org admin by choosing orgId explicitly
+  inviteAdminForOrg: privateProcedure
     .input(
       z.object({
         email: z.string().email(),
         name: z.string().min(1),
+        orgId: z.string().min(1),
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const userOrgId = ctx.data?.adminAccount?.org_id ?? null;
+      const isSystemAdmin = ctx.data?.adminAccount?.org_id === null;
 
-      if (!userOrgId) {
-        throw new TRPCError({ code: "FORBIDDEN", message: "Organisation requise" });
+      if (!isSystemAdmin) {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Réservé aux admins système" });
       }
 
       try {
-        const res = await api.post("/auth/admin/invite", {
-          email: input.email,
-          name: input.name,
-          orgId: userOrgId,
-        });
+        const cookieStore = await cookies();
+        const token = cookieStore.get("accessToken")?.value;
+        const res = await api.post(
+          "/auth/admin/invite",
+          {
+            email: input.email,
+            name: input.name,
+            orgId: input.orgId,
+          },
+          token ? { headers: { Authorization: `Bearer ${token}` } } : undefined
+        );
 
         if (res.data?.error) {
           throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: res.data.error });
