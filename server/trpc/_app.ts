@@ -7,6 +7,7 @@ import { newsRouter } from "./_procedures/news";
 import { newsTagsRouter } from "./_procedures/news-tags";
 import { notificationsRouter } from "./_procedures/notifications";
 import { orgsRouter } from "./_procedures/orgs";
+import { formsRouter } from "./_procedures/forms";
 import { packTagsRouter } from "./_procedures/pack-tags";
 import { packsRouter } from "./_procedures/packs";
 import { postTagsRouter } from "./_procedures/post-tags";
@@ -29,6 +30,7 @@ export const appRouter = createTRPCRouter({
   postTags: postTagsRouter,
   newsTags: newsTagsRouter,
   notifications: notificationsRouter,
+  forms: formsRouter,
 });
 
 export type AppRouter = typeof appRouter;
