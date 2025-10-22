@@ -1,6 +1,4 @@
 "use client";
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { trpc } from "@/server/trpc/client";
 import {
   closestCenter,

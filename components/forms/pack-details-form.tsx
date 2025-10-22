@@ -78,7 +78,7 @@ const PackDetailsForn: React.FC<PackDetailsFornProps> = ({
     if (mode !== "edit-pack") {
       form.reset();
     }
-  }, [mode]);
+  }, [mode, form]);
 
   const props = usePackThumbnailUpload();
 
@@ -89,7 +89,7 @@ const PackDetailsForn: React.FC<PackDetailsFornProps> = ({
         `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE}/${props.successes[0].path}`
       );
     }
-  }, [props]);
+  }, [props, form]);
 
   const onSubmit = async (values: z.infer<typeof packDetailsSchema>) => {
     try {
