@@ -111,7 +111,7 @@ const NewsForm: React.FC<NewsFormProps> = ({ id, news }) => {
         `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE}/${props.successes[0].path}`
       );
     }
-  }, [props]);
+  }, [props, form]);
 
   return (
     <div className="w-full flex items-center justify-center">

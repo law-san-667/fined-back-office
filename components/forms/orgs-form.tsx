@@ -90,7 +90,7 @@ const OrgsForm: React.FC<OrgsFormProps> = ({
         `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE}/${props.successes[0].path}`
       );
     }
-  }, [props]);
+  }, [props, form]);
 
   const onSubmit = async (values: z.infer<typeof orgSchema>) => {
     try {

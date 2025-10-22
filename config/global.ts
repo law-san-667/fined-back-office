@@ -11,6 +11,7 @@ import {
   IconUsers,
   IconUsersGroup,
 } from "@tabler/icons-react";
+import { type Icon } from "@tabler/icons-react";
 
 export const shouldLog = process.env.NEXT_PUBLIC_SHOULD_LOG === "true";
 

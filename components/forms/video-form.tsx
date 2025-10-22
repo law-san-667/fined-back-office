@@ -92,7 +92,7 @@ const VideoForm: React.FC<VideoFormProps> = ({ video, packId }) => {
         `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE}/${urlProps.successes[0].path}`
       );
     }
-  }, [thumbnailProps, urlProps]);
+  }, [thumbnailProps, urlProps, form]);
 
   const onSubmit = async (values: z.infer<typeof videoSchema>) => {
     try {
