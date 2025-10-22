@@ -8,11 +8,18 @@ import { createTRPCRouter, privateProcedure } from "../init";
 
 export const packsRouter = createTRPCRouter({
   getPacks: privateProcedure.query(async ({ ctx }) => {
-    // TODO: Check if org, get only packs of the org
-    const { data, error } = await (supabase as any)
+    const userOrgId = ctx.data?.adminAccount?.org_id ?? null;
+
+    let query = (supabase as any)
       .from("packs")
       .select("*")
       .order("created_at", { ascending: false });
+
+    if (userOrgId) {
+      query = query.eq("org_id", userOrgId);
+    }
+
+    const { data, error } = await query;
 
     if (error) {
       if (shouldLog) console.error(error);
@@ -36,12 +43,18 @@ export const packsRouter = createTRPCRouter({
     .input(z.object({ id: z.string().uuid() }))
     .query(async ({ ctx, input }) => {
       const { id } = input;
+      const userOrgId = ctx.data?.adminAccount?.org_id ?? null;
 
-      const { data: pack, error: packError } = await (supabase as any)
+      let packQuery = (supabase as any)
         .from("packs")
         .select("*")
-        .match({ id })
-        .single();
+        .match({ id });
+
+      if (userOrgId) {
+        packQuery = packQuery.eq("org_id", userOrgId);
+      }
+
+      const { data: pack, error: packError } = await packQuery.single();
       const { data: docs, error: docsError } = await (supabase as any)
         .from("pack_documents")
         .select("*")
@@ -109,6 +122,7 @@ export const packsRouter = createTRPCRouter({
   initPack: privateProcedure
     .input(initPackSchema)
     .mutation(async ({ ctx, input }) => {
+      const userOrgId = ctx.data?.adminAccount?.org_id ?? null;
       const { data: foundPack, error: foundPackError } = await (supabase as any)
         .from("packs")
         .select("*")
@@ -139,6 +153,7 @@ export const packsRouter = createTRPCRouter({
           image: input.image,
           tags: input.tags,
           price: 0,
+          org_id: userOrgId ?? null,
         })
         .select("id");
 
@@ -173,13 +188,13 @@ export const packsRouter = createTRPCRouter({
         id: z.string().uuid(),
         data: packDetailsSchema
       })
-    ).mutation(async ({input , ctx}) => {
-            const { data: foundPack, error: foundPackError } = await (supabase as any)
+    ).mutation(async ({ input , ctx }) => {
+      const userOrgId = ctx.data?.adminAccount?.org_id ?? null;
+      const { data: foundPack, error: foundPackError } = await (supabase as any)
         .from("packs")
         .select("*")
         .eq("title", input.data.title)
         .neq("id", input.id)
-
 
       if (foundPackError) {
         throw new TRPCError({
@@ -195,10 +210,16 @@ export const packsRouter = createTRPCRouter({
         });
       }
 
-      const { error: updateError } = await (supabase as any)
+      let updateQuery = (supabase as any)
         .from("packs")
         .update(input.data)
         .match({ id: input.id });
+
+      if (userOrgId) {
+        updateQuery = updateQuery.eq("org_id", userOrgId);
+      }
+
+      const { error: updateError } = await updateQuery;
 
       if (updateError) {
         throw new TRPCError({
@@ -216,12 +237,19 @@ export const packsRouter = createTRPCRouter({
           tags: z.array(z.string()).min(1, "Au moins un tag est requis"),
         })
       ).mutation(async ({ ctx, input }) => {
+        const userOrgId = ctx.data?.adminAccount?.org_id ?? null;
         const { packId, tags } = input;
 
-        const {data: foundPack, error: packError} = await (supabase as any)
+        let foundQuery = (supabase as any)
           .from("packs")
           .select("id")
           .match({ id: packId });
+
+        if (userOrgId) {
+          foundQuery = foundQuery.eq("org_id", userOrgId);
+        }
+
+        const {data: foundPack, error: packError} = await foundQuery;
 
         if (packError) {
           throw new TRPCError({
@@ -237,10 +265,14 @@ export const packsRouter = createTRPCRouter({
           });
         }
 
-        const { error: updateError } = await (supabase as any)
+        let updQuery = (supabase as any)
           .from("packs")
           .update({ tags })
           .match({ id: packId });
+        if (userOrgId) {
+          updQuery = updQuery.eq("org_id", userOrgId);
+        }
+        const { error: updateError } = await updQuery;
 
           if (updateError) {
             throw new TRPCError({
@@ -259,12 +291,17 @@ export const packsRouter = createTRPCRouter({
           })
         )
         .mutation(async ({ ctx, input }) => {
+          const userOrgId = ctx.data?.adminAccount?.org_id ?? null;
           const { packId, tag } = input;
 
-          const {data: foundPack, error: packError} = await (supabase as any)
+          let foundQuery = (supabase as any)
             .from("packs")
             .select("id, tags")
             .match({ id: packId });
+          if (userOrgId) {
+            foundQuery = foundQuery.eq("org_id", userOrgId);
+          }
+          const {data: foundPack, error: packError} = await foundQuery;
 
           if (packError) {
             throw new TRPCError({
@@ -282,10 +319,14 @@ export const packsRouter = createTRPCRouter({
 
           const newTags = foundPack[0].tags.filter((t: string) => t !== tag);
 
-          const { error: updateError } = await (supabase as any)
+          let updQuery = (supabase as any)
             .from("packs")
             .update({ tags: newTags })
             .match({ id: packId });
+          if (userOrgId) {
+            updQuery = updQuery.eq("org_id", userOrgId);
+          }
+          const { error: updateError } = await updQuery;
 
             if (updateError) {
               throw new TRPCError({
@@ -300,9 +341,14 @@ export const packsRouter = createTRPCRouter({
     .input(z.object({ ids: z.array(z.string()) }))
     .mutation(async ({ ctx, input }) => {
       const { ids } = input;
+      const userOrgId = ctx.data?.adminAccount?.org_id ?? null;
 
       for (const id of ids) {
-        const { error } = await (supabase as any).from("packs").delete().match({ id });
+        let delQuery = (supabase as any).from("packs").delete().match({ id });
+        if (userOrgId) {
+          delQuery = delQuery.eq("org_id", userOrgId);
+        }
+        const { error } = await delQuery;
 
         if (error) {
           if (shouldLog) console.error(error);
@@ -319,8 +365,13 @@ export const packsRouter = createTRPCRouter({
     .input(z.object({ id: z.string().uuid() }))
     .mutation(async ({ ctx, input }) => {
       const { id } = input;
+      const userOrgId = ctx.data?.adminAccount?.org_id ?? null;
 
-      const { error } = await (supabase as any).from("packs").delete().match({ id });
+      let delQuery = (supabase as any).from("packs").delete().match({ id });
+      if (userOrgId) {
+        delQuery = delQuery.eq("org_id", userOrgId);
+      }
+      const { error } = await delQuery;
 
       if (error) {
         if (shouldLog) console.error(error);
