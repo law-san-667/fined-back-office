@@ -1,16 +1,25 @@
 import { shouldLog } from "@/config/global";
 import { newsSchema } from "@/lib/validators";
 import { supabase } from "@/server/supabase";
+import { sendAutoNotification } from "../utils/notification-helpers";
 import { TRPCError } from "@trpc/server";
 import z from "zod";
 import { createTRPCRouter, privateProcedure } from "../init";
 
 export const newsRouter = createTRPCRouter({
   getNews: privateProcedure.query(async ({ ctx }) => {
-    const { data, error } = await (supabase as any)
+    const userOrgId = ctx.data?.adminAccount?.org_id ?? null;
+
+    let query = (supabase as any)
       .from("news")
       .select("*, category(*)")
       .order("created_at", { ascending: false });
+
+    if (userOrgId) {
+      query = query.eq("org_id", userOrgId);
+    }
+
+    const { data, error } = await query;
 
     if (error) {
       if (shouldLog) console.error(error);
@@ -67,6 +76,7 @@ export const newsRouter = createTRPCRouter({
   createNews: privateProcedure
     .input(newsSchema)
     .mutation(async ({ ctx, input }) => {
+      const userOrgId = ctx.data?.adminAccount?.org_id ?? null;
       const { data: foundNews, error: foundNewsError } = await (supabase as any)
         .from("news")
         .select("*")
@@ -90,7 +100,7 @@ export const newsRouter = createTRPCRouter({
 
       const { data: created, error: createError } = await (supabase as any)
         .from("news")
-        .insert(input)
+        .insert({ ...input, org_id: userOrgId ?? null })
         .select();
 
       if (createError) {
@@ -105,6 +115,16 @@ export const newsRouter = createTRPCRouter({
           code: "INTERNAL_SERVER_ERROR",
           message: "L'article n'a pas pu être créé",
         });
+      }
+
+      // Envoyer une notification automatique
+      try {
+        await sendAutoNotification("news", input.title, input.content);
+      } catch (notificationError) {
+        // Log l'erreur mais ne pas faire échouer la création de la news
+        if (shouldLog) {
+          console.error("Erreur lors de l'envoi de la notification automatique:", notificationError);
+        }
       }
 
       return created[0];
