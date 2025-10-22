@@ -2,11 +2,11 @@ import {
   IconBell,
   IconDatabase,
   IconFileAi,
+  IconReport,
   IconFolder,
   IconHash,
   IconHelp,
   IconNews,
-  IconReport,
   IconSettings,
   IconUsers,
   IconUsersGroup,
@@ -26,6 +26,7 @@ export const ADMIN_MENU = {
       url: "/dashboard/orgs",
       icon: IconUsersGroup,
     },
+    // System admins will find the invite flow inside Organisations (Members) page
     {
       title: "Utilisateurs",
       url: "/dashboard/users",
@@ -52,9 +53,9 @@ export const ADMIN_MENU = {
       icon: IconNews,
     },
     {
-      title: "Notifications",
-      url: "/dashboard/notifications",
-      icon: IconBell,
+      title: "Formulaires",
+      url: "/dashboard/forms",
+      icon: IconReport,
     },
   ],
   documents: [
@@ -84,38 +85,24 @@ export const ADMIN_MENU = {
 export const ORG_MENU = {
   navMain: [
     {
-      title: "Mon Organisation",
-      url: "/dashboard/orgs/me",
-      icon: IconUsersGroup,
-    },
-    {
-      title: "Membres",
-      url: "/orgs/members",
-      icon: IconUsers,
-    },
-    {
       title: "Packs",
       url: "/dashboard/packs",
       icon: IconFolder,
     },
+    {
+      title: "News",
+      url: "/dashboard/news",
+      icon: IconNews,
+    },
+    // Les admins d'organisation ont accès aux notifications
+    {
+      title: "Notifications",
+      url: "/dashboard/notifications",
+      icon: IconBell,
+    },
+    // Add notifications link if needed for org admins
   ],
   documents: [],
 };
 
-export const NAV_SECONDARY = [
-  {
-    title: "Réglages",
-    url: "#",
-    icon: IconSettings,
-  },
-  {
-    title: "Support",
-    url: "#",
-    icon: IconHelp,
-  },
-  //   {
-  //     title: "Search",
-  //     url: "#",
-  //     icon: IconSearch,
-  //   },
-];
+export const NAV_SECONDARY = [] as const;

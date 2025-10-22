@@ -67,15 +67,14 @@ api.interceptors.response.use(
   },
   async function (error) {
     const originalRequest = error.config;
-    if (
-      error?.response?.status === 401 &&
-      !originalRequest._retry &&
-      window?.location?.pathname !== "/"
-    ) {
-      originalRequest._retry = true;
-      const result = await RefreshApiToken();
-      api.defaults.headers.common["Authorization"] = `Bearer ${result}`;
-      return api(originalRequest);
+    if (error?.response?.status === 401 && !originalRequest._retry) {
+      // Refresh tokens only in the browser
+      if (isBrowser() && window.location.pathname !== "/") {
+        originalRequest._retry = true;
+        const result = await RefreshApiToken();
+        api.defaults.headers.common["Authorization"] = `Bearer ${result}`;
+        return api(originalRequest);
+      }
     }
     return Promise.reject(error);
   }

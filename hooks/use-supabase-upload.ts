@@ -1,3 +1,5 @@
+"use client";
+
 import { supabaseClient } from "@/server/client";
 import { cleanFileName } from "@/lib/file-utils";
 import { useCallback, useEffect, useMemo, useState } from "react";
